@@ -34,6 +34,18 @@ LINE_MODELS = {
     "v1": Path("M9-grahrekha-lines-v1/model.onnx"),
 }
 Segmenter = Literal["v0", "v1"]
+SegmenterChoice = Literal["auto", "v0", "v1"]
+
+
+def resolve_segmenter(choice: SegmenterChoice, models_dir: Path) -> Segmenter:
+    """ "auto" uses our v1 when its weights are installed, else v0.
+
+    v1 weights are trained locally (ml/) and not distributed, so CI and fresh checkouts
+    fall back to v0. An explicit choice is kept so a missing model fails loudly.
+    """
+    if choice != "auto":
+        return choice
+    return "v1" if (models_dir / LINE_MODELS["v1"]).exists() else "v0"
 
 
 def pipeline_ids(segmenter: Segmenter) -> dict[str, str]:

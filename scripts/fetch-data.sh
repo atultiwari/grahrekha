@@ -182,6 +182,19 @@ if [[ "$TIER" -ge 1 ]]; then
     curl_get "$u" "$d/pg20480.txt"; record B1 "$d/pg20480.txt" "$u"; finish "$d"
   fi
 
+  # Jyotish sources chosen for astrology rules (research/04-jyotish-sources.md): OCR text only.
+  d="$RAW/B2-brihat-jataka-iyer-1885"
+  if item B2 "$d"; then
+    u="https://archive.org/download/b2488442x/b2488442x_djvu.txt"
+    curl_get "$u" "$d/b2488442x_djvu.txt"; record B2 "$d/b2488442x_djvu.txt" "$u"; finish "$d"
+  fi
+
+  d="$RAW/B3-jataka-chandrika-rao-1900"
+  if item B3 "$d"; then
+    u="https://archive.org/download/Astrology_Books_by_B_Suryanarayana_Row/Jataka%20Chandrika%20-%20B%20Suryanarayana%20Row%201900_djvu.txt"
+    curl_get "$u" "$d/jataka-chandrika-1900_djvu.txt"; record B3 "$d/jataka-chandrika-1900_djvu.txt" "$u"; finish "$d"
+  fi
+
   # ---- models
   d="$WEIGHTS/A1-de421"
   if item A1 "$d"; then

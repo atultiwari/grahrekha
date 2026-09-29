@@ -277,6 +277,18 @@ texts:
     download: [https://www.gutenberg.org/cache/epub/20480/pg20480.txt]
     license: public domain (Project Gutenberg)
     local: data/raw/B1-cheiro-palmistry-for-all
+  - id: B2
+    name: Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885), OCR text
+    page: https://archive.org/details/b2488442x
+    download: [https://archive.org/download/b2488442x/b2488442x_djvu.txt]
+    license: public domain (US: published 1885; archive.org Public Domain Mark; translator's death year unverified, see research/04)
+    local: data/raw/B2-brihat-jataka-iyer-1885
+  - id: B3
+    name: Jataka Chandrika, tr. B. Suryanarain Rao (1900), OCR text
+    page: https://archive.org/details/Astrology_Books_by_B_Suryanarayana_Row
+    download: ["https://archive.org/download/Astrology_Books_by_B_Suryanarayana_Row/Jataka%20Chandrika%20-%20B%20Suryanarayana%20Row%201900_djvu.txt"]
+    license: public domain (US: published 1900; India: Rao died 1937)
+    local: data/raw/B3-jataka-chandrika-rao-1900
 
 models:
   - id: A1

@@ -103,9 +103,13 @@ def create_app(
     resolved = settings or Settings()  # values come from ENGINE_* env vars
 
     def default_factory() -> Analyzer:
-        from grahrekha_engine.palm.pipeline import PalmAnalyzer  # heavy imports, lazily
+        from grahrekha_engine.palm.pipeline import (  # heavy imports, lazily
+            PalmAnalyzer,
+            resolve_segmenter,
+        )
 
-        return PalmAnalyzer(resolved.models_dir, resolved.segmenter)
+        segmenter = resolve_segmenter(resolved.segmenter, resolved.models_dir)
+        return PalmAnalyzer(resolved.models_dir, segmenter)
 
     analyzer = _LazyAnalyzer(analyzer_factory or default_factory)
 

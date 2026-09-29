@@ -28,6 +28,13 @@
 
 ## Evaluation
 
+**Headline (2026-09-30, best epoch 26):**
+- Per-line recall: heart 0.976, head 0.947, life 0.945, fate 0.645 (v0: 0.932 / 0.893 / 0.924 / 0.277).
+- Class-agnostic traced + fate line: precision 0.973, recall 0.921.
+- Heart end-zone agreement 88% (v0: 72%).
+- Test–retest agreement 0.80 (v0: 0.77).
+- Cross-camera head and life start zones are less stable than with v0.
+
 See `docs/eval/lines-v1.md`. That covers per-line recall and precision against derived labels, class-agnostic PLSU scores, heart end-zone agreement with human annotation, and test–retest consistency.
 
 ## Known limitations
