@@ -48,12 +48,26 @@ Licence: **CC BY 4.0** (see `LICENSE-CONTENT`). The quoted source texts themselv
 
 **Supported operators:** `==`, `!=`, `<`, `<=`, `>`, `>=`, `in`, `and`, `or`, `!`, `var`. Comparisons with a missing feature are false, so absent lines never trigger a rule.
 
-## Current contents (Phase 1)
+## Current contents
 
 | File | Rules | Status |
 |---|---|---|
-| `palm/western/cheiro-heart.yaml` | 5 | extracted. Four have validity blockers: heart end-zone agrees with human annotation in only 72% of palms (target 85%). |
+| `palm/western/cheiro-heart.yaml` | 5 | extracted. Heart end-zone rules are valid only with the v1 segmenter (88% agreement with human annotation; v0: 72%). |
 | `palm/western/cheiro-head.yaml` | 5 | extracted. Two use an experimental feature (research arm only). |
+| `astro/vedic/brihat-jataka-houses.yaml` | 18 | extracted. Planets in houses, Brihat Jataka ch. XX (tr. Chidambaram Iyer, 1885). |
+| `astro/vedic/jataka-chandrika-dasha.yaml` | 4 | extracted. Current mahadasha judged by its lord's house rulership (Jataka Chandrika, tr. Rao, 1900). |
+
+**Astro rules** are evaluated on `astro_features.v1` (`services/engine/src/grahrekha_engine/astro/features.py`):
+- `planets.<Planet>.house`, `.sign`, `.navamsa_sign` and `.retrograde`;
+- `lagna_sign`;
+- `mahadasha` / `antardasha`, each with `lord` and `houses_ruled`;
+- `time_confidence` and `moon_nakshatra_uncertain`.
+
+The lint applies the astro version of "zones must be certain":
+- Rules that use houses, the lagna or lordship must require `time_confidence == exact`.
+- Rules that use the dasha must require `moon_nakshatra_uncertain == false`.
+
+The two Jyotish sources are OCR scans, so their quotes are checked at ≥ 90% similarity rather than verbatim. Why these sources were chosen: [research/04-jyotish-sources.md](../research/04-jyotish-sources.md).
 
 **Next:**
 - Benham, *The Laws of Scientific Hand Reading* (1900).

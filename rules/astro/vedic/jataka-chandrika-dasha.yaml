@@ -1,0 +1,155 @@
+# Vimshottari mahadasha rules from Jataka Chandrika (the Laghu Parashari tradition),
+# tr. B. Suryanarain Rao (Bangalore, 1900). Public domain (US: published 1900; India:
+# Rao died 1937). archive.org "Astrology_Books_by_B_Suryanarayana_Row". Rule text:
+# CC BY 4.0 (LICENSE-CONTENT). Source text: scripts/fetch-data.sh --only B3 (OCR; quotes
+# are lightly corrected and checked at >= 90% similarity).
+#
+# The text judges a planet's period by the houses it RULES, counted from the lagna
+# (mahadasha.houses_ruled, whole-sign lordship). So every rule needs an exact birth time
+# and a Moon nakshatra that is certain (it fixes which dasha is running); rules lint
+# enforces both.
+#
+# Left out (D-009): stanza IX (maraka: "certain death") and stanza VIII (lord of the 8th,
+# the house of longevity). Rahu/Ketu periods (stanzas XII, XIX) depend on conjunctions
+# and aspects we do not compute yet, so they have no rules.
+# Rules describe the CURRENT period only; a reading must show its dates.
+
+- id: astro.jc.mahadasha_lord_rules_kendra_and_trikona
+  tradition: vedic
+  engine: astro
+  domain: life_path_timing
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: moon_nakshatra_uncertain}, false]
+      - or:
+          - in: [1, {var: mahadasha.houses_ruled}]
+          - in: [4, {var: mahadasha.houses_ruled}]
+          - in: [7, {var: mahadasha.houses_ruled}]
+          - in: [10, {var: mahadasha.houses_ruled}]
+      - or:
+          - in: [5, {var: mahadasha.houses_ruled}]
+          - in: [9, {var: mahadasha.houses_ruled}]
+  statement:
+    en: >-
+      Your current major period (mahadasha) belongs to a planet that rules both an angular
+      house and a house of fortune in your chart. The Laghu Parashari tradition counts
+      this among the most favourable periods, one for building and consolidating.
+  polarity: positive
+  strength: 3
+  excludes:
+    - astro.jc.mahadasha_lord_rules_trikona
+    - astro.jc.mahadasha_lord_rules_upachaya_only
+    - astro.jc.mahadasha_benefic_rules_kendra_only
+  source:
+    work: "Jataka Chandrika, tr. B. Suryanarain Rao (1900)"
+    locator: "Stanza XX"
+    edition: "Bangalore, 1900; archive.org Astrology_Books_by_B_Suryanarayana_Row"
+    quote: >-
+      The union of the lordship of the Kendra and Thrikona in one planet produces good.
+  mapping_note: >-
+    Kendra = houses 1, 4, 7, 10; Thrikona = houses 5, 9 (the 1st also counts as a
+    trikona in the text, so a lagna lord that rules the 5th or 9th qualifies too).
+  review: {status: extracted}
+
+- id: astro.jc.mahadasha_lord_rules_trikona
+  tradition: vedic
+  engine: astro
+  domain: life_path_timing
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: moon_nakshatra_uncertain}, false]
+      - or:
+          - in: [5, {var: mahadasha.houses_ruled}]
+          - in: [9, {var: mahadasha.houses_ruled}]
+  statement:
+    en: >-
+      Your current major period (mahadasha) belongs to the ruler of a house of fortune
+      (the 5th or 9th) in your chart. Jataka Chandrika calls these rulers "always good",
+      marking a generally supportive period.
+  polarity: positive
+  strength: 2
+  excludes: [astro.jc.mahadasha_lord_rules_upachaya_only]
+  source:
+    work: "Jataka Chandrika, tr. B. Suryanarain Rao (1900)"
+    locator: "Stanza V"
+    edition: "Bangalore, 1900; archive.org Astrology_Books_by_B_Suryanarayana_Row"
+    quote: >-
+      Lords of the 5th and 9th houses are always good, while lords of the 3rd, 6th and
+      11th are always evil.
+  review: {status: extracted}
+
+- id: astro.jc.mahadasha_lord_rules_upachaya_only
+  tradition: vedic
+  engine: astro
+  domain: life_path_timing
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: moon_nakshatra_uncertain}, false]
+      - or:
+          - in: [3, {var: mahadasha.houses_ruled}]
+          - in: [6, {var: mahadasha.houses_ruled}]
+          - in: [11, {var: mahadasha.houses_ruled}]
+      - "!":
+          or:
+            - in: [5, {var: mahadasha.houses_ruled}]
+            - in: [9, {var: mahadasha.houses_ruled}]
+  statement:
+    en: >-
+      Your current major period (mahadasha) belongs to the ruler of the 3rd, 6th or 11th
+      house. Jataka Chandrika treats this as a more demanding period: progress comes
+      through effort, competition and persistence rather than easy luck.
+  polarity: caution
+  strength: 2
+  source:
+    work: "Jataka Chandrika, tr. B. Suryanarain Rao (1900)"
+    locator: "Stanza V"
+    edition: "Bangalore, 1900; archive.org Astrology_Books_by_B_Suryanarayana_Row"
+    quote: >-
+      Lords of the 5th and 9th houses are always good, while lords of the 3rd, 6th and
+      11th are always evil.
+  mapping_note: >-
+    "Evil" is rendered as a demanding period, not as harm. Excluded when the same planet
+    also rules the 5th or 9th (the favourable lordship wins, per stanza V's ranking).
+  review: {status: extracted}
+
+- id: astro.jc.mahadasha_benefic_rules_kendra_only
+  tradition: vedic
+  engine: astro
+  domain: life_path_timing
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: moon_nakshatra_uncertain}, false]
+      - in: [{var: mahadasha.lord}, [Jupiter, Venus, Mercury, Moon]]
+      - or:
+          - in: [4, {var: mahadasha.houses_ruled}]
+          - in: [7, {var: mahadasha.houses_ruled}]
+          - in: [10, {var: mahadasha.houses_ruled}]
+      - "!":
+          or:
+            - in: [1, {var: mahadasha.houses_ruled}]
+            - in: [5, {var: mahadasha.houses_ruled}]
+            - in: [9, {var: mahadasha.houses_ruled}]
+  statement:
+    en: >-
+      Your current major period (mahadasha) belongs to a naturally gentle planet that
+      rules an angular house in your chart. Laghu Parashari counts this as less helpful
+      than it looks: results may need more deliberate effort than expected.
+  polarity: caution
+  strength: 1
+  source:
+    work: "Jataka Chandrika, tr. B. Suryanarain Rao (1900)"
+    locator: "Stanza VI"
+    edition: "Bangalore, 1900; archive.org Astrology_Books_by_B_Suryanarayana_Row"
+    quote: >-
+      When Benefics own quadrants they produce evil. When Malefics own quadrants they
+      produce good
+  mapping_note: >-
+    Benefics = Jupiter, Venus, Mercury, Moon (stanza X: Mercury and the Moon less so).
+    The 1st house is excluded because the lagna is also a trikona. The matching "malefics
+    owning quadrants produce good" is not given its own rule: stanza XI says Mars needs
+    the 5th as well, so it is covered by the kendra-and-trikona rule.
+  review: {status: extracted}

@@ -101,3 +101,31 @@ class PlacesResponseV1(Contract):
     schema_version: Literal["places_response.v1"] = "places_response.v1"
     attribution: str  # GeoNames data is CC BY 4.0: show this wherever results are shown
     places: list[PlaceV1]
+
+
+# --- Features for astrology rules (rules/astro). Derived from AstroChartV1 by
+# astro/features.py; keyed by planet so rules can say planets.Sun.house.
+
+
+class AstroPlanetFeaturesV1(Contract):
+    sign: Sign
+    house: int | None = None  # None when the birth time is not exact
+    navamsa_sign: Sign
+    retrograde: bool
+
+
+class DashaLordFeaturesV1(Contract):
+    lord: Planet | None = None
+    # Houses (from the lagna) whose signs this planet rules; [] for Rahu/Ketu or when the
+    # birth time is unknown. Laghu Parashari judges a period by these (Jataka Chandrika).
+    houses_ruled: list[int] = Field(default_factory=list)
+
+
+class AstroFeaturesV1(Contract):
+    schema_version: Literal["astro_features.v1"] = "astro_features.v1"
+    time_confidence: TimeConfidence
+    moon_nakshatra_uncertain: bool
+    lagna_sign: Sign | None = None
+    planets: dict[Planet, AstroPlanetFeaturesV1]
+    mahadasha: DashaLordFeaturesV1
+    antardasha: DashaLordFeaturesV1

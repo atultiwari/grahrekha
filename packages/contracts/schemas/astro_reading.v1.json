@@ -1,0 +1,699 @@
+{
+  "$defs": {
+    "AstroChartV1": {
+      "additionalProperties": false,
+      "properties": {
+        "ayanamsa": {
+          "title": "Ayanamsa",
+          "type": "string"
+        },
+        "current_antardasha": {
+          "anyOf": [
+            {
+              "enum": [
+                "Sun",
+                "Moon",
+                "Mars",
+                "Mercury",
+                "Jupiter",
+                "Venus",
+                "Saturn",
+                "Rahu",
+                "Ketu"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Antardasha"
+        },
+        "current_mahadasha": {
+          "anyOf": [
+            {
+              "enum": [
+                "Sun",
+                "Moon",
+                "Mars",
+                "Mercury",
+                "Jupiter",
+                "Venus",
+                "Saturn",
+                "Rahu",
+                "Ketu"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Mahadasha"
+        },
+        "lagna_degree": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lagna Degree"
+        },
+        "lagna_sign": {
+          "anyOf": [
+            {
+              "enum": [
+                "Aries",
+                "Taurus",
+                "Gemini",
+                "Cancer",
+                "Leo",
+                "Virgo",
+                "Libra",
+                "Scorpio",
+                "Sagittarius",
+                "Capricorn",
+                "Aquarius",
+                "Pisces"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lagna Sign"
+        },
+        "mahadashas": {
+          "items": {
+            "$ref": "#/$defs/DashaPeriodV1"
+          },
+          "title": "Mahadashas",
+          "type": "array"
+        },
+        "moon_nakshatra": {
+          "title": "Moon Nakshatra",
+          "type": "string"
+        },
+        "moon_nakshatra_uncertain": {
+          "title": "Moon Nakshatra Uncertain",
+          "type": "boolean"
+        },
+        "navamsa_lagna_sign": {
+          "anyOf": [
+            {
+              "enum": [
+                "Aries",
+                "Taurus",
+                "Gemini",
+                "Cancer",
+                "Leo",
+                "Virgo",
+                "Libra",
+                "Scorpio",
+                "Sagittarius",
+                "Capricorn",
+                "Aquarius",
+                "Pisces"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Navamsa Lagna Sign"
+        },
+        "planets": {
+          "items": {
+            "$ref": "#/$defs/PlanetPositionV1"
+          },
+          "title": "Planets",
+          "type": "array"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "astro_chart.v1",
+          "default": "astro_chart.v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "time_confidence": {
+          "enum": [
+            "exact",
+            "approximate",
+            "unknown"
+          ],
+          "title": "Time Confidence",
+          "type": "string"
+        },
+        "timezone": {
+          "title": "Timezone",
+          "type": "string"
+        },
+        "utc_offset_hours": {
+          "title": "Utc Offset Hours",
+          "type": "number"
+        }
+      },
+      "required": [
+        "schema_version",
+        "provider",
+        "ayanamsa",
+        "timezone",
+        "utc_offset_hours",
+        "time_confidence",
+        "lagna_sign",
+        "lagna_degree",
+        "navamsa_lagna_sign",
+        "planets",
+        "moon_nakshatra",
+        "moon_nakshatra_uncertain",
+        "mahadashas",
+        "current_mahadasha",
+        "current_antardasha"
+      ],
+      "title": "AstroChartV1",
+      "type": "object"
+    },
+    "AstroFeaturesV1": {
+      "additionalProperties": false,
+      "properties": {
+        "antardasha": {
+          "$ref": "#/$defs/DashaLordFeaturesV1"
+        },
+        "lagna_sign": {
+          "anyOf": [
+            {
+              "enum": [
+                "Aries",
+                "Taurus",
+                "Gemini",
+                "Cancer",
+                "Leo",
+                "Virgo",
+                "Libra",
+                "Scorpio",
+                "Sagittarius",
+                "Capricorn",
+                "Aquarius",
+                "Pisces"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lagna Sign"
+        },
+        "mahadasha": {
+          "$ref": "#/$defs/DashaLordFeaturesV1"
+        },
+        "moon_nakshatra_uncertain": {
+          "title": "Moon Nakshatra Uncertain",
+          "type": "boolean"
+        },
+        "planets": {
+          "additionalProperties": {
+            "$ref": "#/$defs/AstroPlanetFeaturesV1"
+          },
+          "propertyNames": {
+            "enum": [
+              "Sun",
+              "Moon",
+              "Mars",
+              "Mercury",
+              "Jupiter",
+              "Venus",
+              "Saturn",
+              "Rahu",
+              "Ketu"
+            ]
+          },
+          "title": "Planets",
+          "type": "object"
+        },
+        "schema_version": {
+          "const": "astro_features.v1",
+          "default": "astro_features.v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "time_confidence": {
+          "enum": [
+            "exact",
+            "approximate",
+            "unknown"
+          ],
+          "title": "Time Confidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "time_confidence",
+        "moon_nakshatra_uncertain",
+        "lagna_sign",
+        "planets",
+        "mahadasha",
+        "antardasha"
+      ],
+      "title": "AstroFeaturesV1",
+      "type": "object"
+    },
+    "AstroPlanetFeaturesV1": {
+      "additionalProperties": false,
+      "properties": {
+        "house": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "House"
+        },
+        "navamsa_sign": {
+          "enum": [
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+            "Capricorn",
+            "Aquarius",
+            "Pisces"
+          ],
+          "title": "Navamsa Sign",
+          "type": "string"
+        },
+        "retrograde": {
+          "title": "Retrograde",
+          "type": "boolean"
+        },
+        "sign": {
+          "enum": [
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+            "Capricorn",
+            "Aquarius",
+            "Pisces"
+          ],
+          "title": "Sign",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sign",
+        "house",
+        "navamsa_sign",
+        "retrograde"
+      ],
+      "title": "AstroPlanetFeaturesV1",
+      "type": "object"
+    },
+    "DashaLordFeaturesV1": {
+      "additionalProperties": false,
+      "properties": {
+        "houses_ruled": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Houses Ruled",
+          "type": "array"
+        },
+        "lord": {
+          "anyOf": [
+            {
+              "enum": [
+                "Sun",
+                "Moon",
+                "Mars",
+                "Mercury",
+                "Jupiter",
+                "Venus",
+                "Saturn",
+                "Rahu",
+                "Ketu"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lord"
+        }
+      },
+      "required": [
+        "lord",
+        "houses_ruled"
+      ],
+      "title": "DashaLordFeaturesV1",
+      "type": "object"
+    },
+    "DashaPeriodV1": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "format": "date",
+          "title": "End",
+          "type": "string"
+        },
+        "lord": {
+          "enum": [
+            "Sun",
+            "Moon",
+            "Mars",
+            "Mercury",
+            "Jupiter",
+            "Venus",
+            "Saturn",
+            "Rahu",
+            "Ketu"
+          ],
+          "title": "Lord",
+          "type": "string"
+        },
+        "start": {
+          "format": "date",
+          "title": "Start",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lord",
+        "start",
+        "end"
+      ],
+      "title": "DashaPeriodV1",
+      "type": "object"
+    },
+    "FiredRuleV1": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "mapping_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mapping Note"
+        },
+        "polarity": {
+          "enum": [
+            "positive",
+            "neutral",
+            "caution"
+          ],
+          "title": "Polarity",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceV1"
+        },
+        "statement": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Statement",
+          "type": "object"
+        },
+        "status": {
+          "enum": [
+            "extracted",
+            "reviewed",
+            "approved",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "strength": {
+          "title": "Strength",
+          "type": "integer"
+        },
+        "validity_blocker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Validity Blocker"
+        }
+      },
+      "required": [
+        "id",
+        "domain",
+        "polarity",
+        "strength",
+        "statement",
+        "source",
+        "status",
+        "mapping_note",
+        "validity_blocker"
+      ],
+      "title": "FiredRuleV1",
+      "type": "object"
+    },
+    "PlanetPositionV1": {
+      "additionalProperties": false,
+      "properties": {
+        "degree_in_sign": {
+          "title": "Degree In Sign",
+          "type": "number"
+        },
+        "house": {
+          "anyOf": [
+            {
+              "maximum": 12,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "House"
+        },
+        "longitude": {
+          "title": "Longitude",
+          "type": "number"
+        },
+        "nakshatra": {
+          "title": "Nakshatra",
+          "type": "string"
+        },
+        "navamsa_sign": {
+          "enum": [
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+            "Capricorn",
+            "Aquarius",
+            "Pisces"
+          ],
+          "title": "Navamsa Sign",
+          "type": "string"
+        },
+        "pada": {
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Pada",
+          "type": "integer"
+        },
+        "planet": {
+          "enum": [
+            "Sun",
+            "Moon",
+            "Mars",
+            "Mercury",
+            "Jupiter",
+            "Venus",
+            "Saturn",
+            "Rahu",
+            "Ketu"
+          ],
+          "title": "Planet",
+          "type": "string"
+        },
+        "retrograde": {
+          "title": "Retrograde",
+          "type": "boolean"
+        },
+        "sign": {
+          "enum": [
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+            "Capricorn",
+            "Aquarius",
+            "Pisces"
+          ],
+          "title": "Sign",
+          "type": "string"
+        }
+      },
+      "required": [
+        "planet",
+        "longitude",
+        "sign",
+        "degree_in_sign",
+        "navamsa_sign",
+        "nakshatra",
+        "pada",
+        "house",
+        "retrograde"
+      ],
+      "title": "PlanetPositionV1",
+      "type": "object"
+    },
+    "RulesResponseV1": {
+      "additionalProperties": false,
+      "properties": {
+        "fired": {
+          "items": {
+            "$ref": "#/$defs/FiredRuleV1"
+          },
+          "title": "Fired",
+          "type": "array"
+        },
+        "rulebase_version": {
+          "title": "Rulebase Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rulebase_version",
+        "fired"
+      ],
+      "title": "RulesResponseV1",
+      "type": "object"
+    },
+    "SourceV1": {
+      "additionalProperties": false,
+      "properties": {
+        "edition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edition"
+        },
+        "locator": {
+          "title": "Locator",
+          "type": "string"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quote"
+        },
+        "work": {
+          "title": "Work",
+          "type": "string"
+        }
+      },
+      "required": [
+        "work",
+        "locator",
+        "edition",
+        "quote"
+      ],
+      "title": "SourceV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "chart": {
+      "$ref": "#/$defs/AstroChartV1"
+    },
+    "features": {
+      "$ref": "#/$defs/AstroFeaturesV1"
+    },
+    "rules": {
+      "$ref": "#/$defs/RulesResponseV1"
+    },
+    "schema_version": {
+      "const": "astro_reading.v1",
+      "default": "astro_reading.v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "chart",
+    "features",
+    "rules"
+  ],
+  "title": "AstroReadingV1",
+  "type": "object"
+}

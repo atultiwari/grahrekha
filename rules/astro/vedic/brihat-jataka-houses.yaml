@@ -1,0 +1,455 @@
+# Planets in houses, from Varahamihira's Brihat Jataka, Chapter XX ("On the Planets in the
+# Bhavas"), tr. N. Chidambaram Iyer (Madras, 1885). Public domain (US: published 1885;
+# archive.org b2488442x, Public Domain Mark). Rule text: CC BY 4.0 (LICENSE-CONTENT).
+# Source text: scripts/fetch-data.sh --only B2 (OCR; quotes are lightly corrected and
+# checked at >= 90% similarity).
+#
+# Selection (research/04-jyotish-sources.md, owner delegated the choice 2026-09-30):
+# - Kept: statements about temperament, learning, work, standing and resources.
+# - Left out: every statement about disease, blindness, bodily defects, sons/children
+#   (fertility), danger to life or death (D-009), and moral verdicts ("wicked", "sinner",
+#   "apostate", "unchaste"), which we will not tell a user about themselves.
+#   This makes the selection lean positive; the owner should weigh that in review.
+# - Houses are whole-sign houses from the lagna, as in the text; they need an exact
+#   birth time (rules lint). BJ XX.10-11 scale every effect by the planet's sign dignity
+#   (exaltation ... debilitation, combustion). That scaling is NOT modelled yet.
+
+- id: astro.bj.sun_3rd_house
+  tradition: vedic
+  engine: astro
+  domain: mind_learning
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Sun.house}, 3]
+  statement:
+    en: >-
+      Your Sun sits in the 3rd house, which Varahamihira linked with a quick
+      intelligence and the energy to act on it.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 2"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      the Sun occupy the 3rd house from the ascendant, the person will be intelligent
+      and powerful
+  mapping_note: &dignity Effects are scaled by the planet's sign dignity in BJ XX.10-11; not modelled yet.
+  review: {status: extracted}
+
+- id: astro.bj.sun_10th_house
+  tradition: vedic
+  engine: astro
+  domain: career_work
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Sun.house}, 10]
+  statement:
+    en: >-
+      Your Sun sits in the 10th house, the house of work and standing. Varahamihira
+      read this as a life of comfort and real influence in your field.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 3"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      if he occupy the 10th house, the person will live in comfort and will be powerful
+  mapping_note: *dignity
+  review: {status: extracted}
+
+- id: astro.bj.sun_11th_house
+  tradition: vedic
+  engine: astro
+  domain: money_resources
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Sun.house}, 11]
+  statement:
+    en: >-
+      Your Sun sits in the 11th house, the house of gains, which Varahamihira associated
+      with building substantial wealth.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 3"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      if he occupy the 11th house the person will be very rich
+  mapping_note: *dignity
+  review: {status: extracted}
+
+- id: astro.bj.moon_2nd_house
+  tradition: vedic
+  engine: astro
+  domain: love_relationships
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Moon.house}, 2]
+  statement:
+    en: >-
+      Your Moon sits in the 2nd house, which Varahamihira connected with a large,
+      close family circle around you.
+  polarity: positive
+  strength: 1
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 4"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      If the Moon occupy the 2nd house from the ascendant, the person will be a man of a
+      large family
+  mapping_note: *dignity
+  review: {status: extracted}
+
+- id: astro.bj.moon_4th_house
+  tradition: vedic
+  engine: astro
+  domain: personality_temperament
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Moon.house}, 4]
+  statement:
+    en: >-
+      Your Moon sits in the 4th house, the house of home. The classical reading is
+      contentment, a supportive circle of relatives, a settled home and a love of
+      learning.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 4, translator's note (a)"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      if the Moon occupy the 4th house from the ascendant, the person will be happy, will
+      have kinsmen and houses, and will be learned
+  mapping_note: *dignity
+  review: {status: extracted}
+
+- id: astro.bj.moon_10th_house
+  tradition: vedic
+  engine: astro
+  domain: career_work
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Moon.house}, 10]
+  statement:
+    en: >-
+      Your Moon sits in the 10th house. Varahamihira saw this as success wherever you
+      work, together with principles, intelligence and courage.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 5"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      If she occupy the 10th house, he will be successful in all places, will be
+      virtuous, wealthy, intelligent and valorous
+  mapping_note: *dignity
+  review: {status: extracted}
+
+- id: astro.bj.moon_11th_house
+  tradition: vedic
+  engine: astro
+  domain: money_resources
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Moon.house}, 11]
+  statement:
+    en: >-
+      Your Moon sits in the 11th house, the house of gains: in the classical reading,
+      recognition and a steady flow of income.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 5"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      If she occupy the 11th house, the person will be famous and will gain wealth
+  mapping_note: *dignity
+  review: {status: extracted}
+
+- id: astro.bj.mercury_1st_house
+  tradition: vedic
+  engine: astro
+  domain: mind_learning
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Mercury.house}, 1]
+  statement:
+    en: >-
+      Mercury, the planet of intellect, rises in your 1st house. Varahamihira read this
+      as a learned, studious nature.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 6"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      if at the time of birth of a person Mercury occupy the ascendant such person will
+      be learned
+  mapping_note: *dignity
+  review: {status: extracted}
+
+- id: astro.bj.mercury_2nd_house
+  tradition: vedic
+  engine: astro
+  domain: money_resources
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Mercury.house}, 2]
+  statement:
+    en: >-
+      Mercury sits in your 2nd house, the house of resources, which the classical text
+      ties to prosperity earned through your wits.
+  polarity: positive
+  strength: 1
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 6"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      If he occupy the 2nd house, the person will be wealthy. If he occupy the 3rd house
+  mapping_note: *dignity
+  review: {status: extracted}
+
+- id: astro.bj.mercury_5th_house
+  tradition: vedic
+  engine: astro
+  domain: career_work
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Mercury.house}, 5]
+  statement:
+    en: >-
+      Mercury sits in your 5th house. The classical text pictures a royal minister:
+      today, a natural fit for advisory, administrative or policy roles.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 6"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      If he occupy the 5th house, he will be a minister under a king
+  mapping_note: >-
+    "Minister under a king" is rendered as advisory/administrative work. Sign dignity
+    scaling (BJ XX.10-11) is not modelled yet.
+  review: {status: extracted}
+
+- id: astro.bj.mercury_7th_house
+  tradition: vedic
+  engine: astro
+  domain: mind_learning
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Mercury.house}, 7]
+  statement:
+    en: >-
+      Mercury sits in your 7th house, which Varahamihira linked with a knowledge of law:
+      a mind for rules, contracts and fair dealing.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 6"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      If he occupy the 7th house, he will possess a knowledge of law
+  mapping_note: *dignity
+  review: {status: extracted}
+
+- id: astro.bj.mercury_8th_house
+  tradition: vedic
+  engine: astro
+  domain: personality_temperament
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Mercury.house}, 8]
+  statement:
+    en: >-
+      Mercury sits in your 8th house. Varahamihira wrote that such a person becomes known
+      for their good qualities.
+  polarity: positive
+  strength: 1
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 6"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      If he occupy the 8th house, the person will be renowned for his virtues
+  mapping_note: *dignity
+  review: {status: extracted}
+
+- id: astro.bj.jupiter_1st_house
+  tradition: vedic
+  engine: astro
+  domain: mind_learning
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Jupiter.house}, 1]
+  statement:
+    en: >-
+      Jupiter, the planet of wisdom, rises in your 1st house: in the classical reading, a
+      learned and thoughtful person.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 7 (houses 1-12 in order)"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      Jupiter occupy the 12 signs from the ascendant, such person will respectively be
+      learned, of good speech
+  mapping_note: >-
+    Stanza 7 lists one effect per house in order from the 1st; "learned" is the 1st.
+    Sign dignity scaling (BJ XX.10-11) is not modelled yet.
+  review: {status: extracted}
+
+- id: astro.bj.jupiter_2nd_house
+  tradition: vedic
+  engine: astro
+  domain: personality_temperament
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Jupiter.house}, 2]
+  statement:
+    en: >-
+      Jupiter sits in your 2nd house, the house of speech. The classical reading is a
+      gift for speaking well.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 7 (houses 1-12 in order)"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      such person will respectively be learned, of good speech, a niggard, will live in
+      comfort, will be intelligent
+  mapping_note: >-
+    "Of good speech" is the 2nd item in stanza 7's list. Sign dignity scaling
+    (BJ XX.10-11) is not modelled yet.
+  review: {status: extracted}
+
+- id: astro.bj.jupiter_5th_house
+  tradition: vedic
+  engine: astro
+  domain: mind_learning
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Jupiter.house}, 5]
+  statement:
+    en: >-
+      Jupiter sits in your 5th house, the house of intellect, which Varahamihira read as
+      a sharp, well-developed intelligence.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 7 (houses 1-12 in order)"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      will live in comfort, will be intelligent, will have no enemies
+  mapping_note: >-
+    "Will be intelligent" is the 5th item in stanza 7's list. Sign dignity scaling
+    (BJ XX.10-11) is not modelled yet.
+  review: {status: extracted}
+
+- id: astro.bj.jupiter_11th_house
+  tradition: vedic
+  engine: astro
+  domain: money_resources
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Jupiter.house}, 11]
+  statement:
+    en: >-
+      Jupiter sits in your 11th house, the house of gains: in the classical reading,
+      a life with plenty of gains.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 7 (houses 1-12 in order)"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      will be a devotee, will be possessed of wealth, will be full of gain
+  mapping_note: >-
+    "Full of gain" is the 11th item in stanza 7's list. Sign dignity scaling
+    (BJ XX.10-11) is not modelled yet.
+  review: {status: extracted}
+
+- id: astro.bj.venus_1st_house
+  tradition: vedic
+  engine: astro
+  domain: love_relationships
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Venus.house}, 1]
+  statement:
+    en: >-
+      Venus, the planet of love, rises in your 1st house. Varahamihira read this as
+      someone skilled in romance who enjoys comfort and the good things in life.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 8"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      Venus occupy the ascendant, such person will be skilled in acts of love and will
+      live in great comfort
+  mapping_note: *dignity
+  review: {status: extracted}
+
+- id: astro.bj.saturn_1st_house_in_own_or_friendly_sign
+  tradition: vedic
+  engine: astro
+  domain: career_work
+  when:
+    and:
+      - "==": [{var: time_confidence}, exact]
+      - "==": [{var: planets.Saturn.house}, 1]
+      - in: [{var: lagna_sign}, [Libra, Sagittarius, Capricorn, Aquarius, Pisces]]
+  statement:
+    en: >-
+      Saturn rises in your 1st house in one of the signs where Varahamihira considered it
+      strong. He described such a person as content, trusted with leadership over a
+      community, and learned.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Varahamihira, Brihat Jataka, tr. N. Chidambaram Iyer (1885)"
+    locator: "Chapter XX, stanza 9"
+    edition: "Madras, Foster Press; archive.org b2488442x"
+    quote: >-
+      But if the ascendant, occupied by Saturn, be Libra, Sagittari, Capricorn, Aquarius
+      or Pisces, the person will be as happy as a king, will rule over a village or a
+      town, will be learned
+  mapping_note: >-
+    "Rule over a village or a town" is rendered as community leadership. Saturn in the
+    1st in other signs carries health statements in the same stanza and has no rule
+    (D-009).
+  review: {status: extracted}

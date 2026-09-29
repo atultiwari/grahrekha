@@ -30,6 +30,7 @@ from grahrekha_engine.contracts.astro import (
     PlacesResponseV1,
     PlaceV1,
 )
+from grahrekha_engine.contracts.astro_reading import AstroReadingRequestV1, AstroReadingV1
 from grahrekha_engine.contracts.palm import PalmAnalysisV1
 from grahrekha_engine.contracts.rules import RulesRequestV1, RulesResponseV1
 from grahrekha_engine.palm.image_io import MAX_UPLOAD_BYTES, InvalidImageError
@@ -159,9 +160,9 @@ def create_app(
         return RulesResponseV1(rulebase_version=version, fired=fired)
 
     ephemeris = resolved.models_dir / "A1-de421" / "de421.bsp"
+    astro_rules = load_rules(resolved.rules_dir / "astro")
 
-    @v1.post("/astro/chart")
-    def astro_chart(request: AstroRequestV1) -> AstroChartV1:
+    def chart_for(request: AstroRequestV1) -> AstroChartV1:
         if not ephemeris.exists():
             raise HTTPException(
                 status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -174,6 +175,26 @@ def create_app(
             return compute_chart(request.birth, ephemeris, request.reference_date)
         except TimezoneError as error:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(error)) from error
+
+    @v1.post("/astro/chart")
+    def astro_chart(request: AstroRequestV1) -> AstroChartV1:
+        return chart_for(request)
+
+    @v1.post("/astro/reading")
+    def astro_reading(request: AstroReadingRequestV1) -> AstroReadingV1:
+        from grahrekha_engine.astro.features import astro_features
+
+        chart = chart_for(request)
+        features = astro_features(chart)
+        statuses = (
+            {"extracted", "reviewed", "approved"} if request.include_unreviewed else {"approved"}
+        )
+        fired = evaluate_rules(features, astro_rules, statuses=statuses)  # type: ignore[arg-type]
+        return AstroReadingV1(
+            chart=chart,
+            features=features,
+            rules=RulesResponseV1(rulebase_version=version, fired=fired),
+        )
 
     geonames = resolved.models_dir / "A2-geonames"
     places = _LazyPlaces(geonames)

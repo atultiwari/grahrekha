@@ -165,3 +165,18 @@ def test_rahu_is_corrected_for_precession(
     assert abs(((rahu.longitude - swiss_rahu) + 180) % 360 - 180) < 0.02
     assert SIGNS[int(rahu.longitude // 30)] == rahu.sign
     assert abs(((rahu.longitude - ketu.longitude) % 360) - 180) < 1e-6
+
+
+def test_real_chart_fires_the_expected_astro_rules(ephemeris_path: Path) -> None:
+    from grahrekha_engine.astro.features import astro_features
+    from grahrekha_engine.rules.engine import evaluate_rules
+    from grahrekha_engine.rules.model import load_rules
+
+    rules = load_rules(Path(__file__).resolve().parents[4] / "rules/astro")
+    chart = compute_chart(KARMALA, ephemeris_path, reference_date=date(2026, 9, 30))
+    features = astro_features(chart)
+    assert features.mahadasha.lord == "Jupiter" and features.mahadasha.houses_ruled == [5, 8]
+    fired = {f.id for f in evaluate_rules(features, rules)}
+    assert {"astro.jc.mahadasha_lord_rules_trikona", "astro.bj.sun_11th_house"} <= fired
+    assert "astro.bj.jupiter_5th_house" in fired
+    assert not any(f.startswith("astro.bj.moon_") for f in fired)  # Moon is in the 7th

@@ -6,6 +6,7 @@ from typing import Any, get_args, get_origin
 
 from pydantic import BaseModel
 
+from grahrekha_engine.contracts.astro import AstroFeaturesV1
 from grahrekha_engine.contracts.palm import PalmFeaturesV1
 from grahrekha_engine.rules.jsonlogic import referenced_vars
 from grahrekha_engine.rules.model import Rule, Tier
@@ -34,7 +35,22 @@ def _paths(model: type[BaseModel], prefix: str = "") -> set[str]:
     return paths
 
 
-FEATURE_PATHS = _paths(PalmFeaturesV1)
+FEATURE_PATHS = {"palm": _paths(PalmFeaturesV1), "astro": _paths(AstroFeaturesV1)}
+
+
+def _astro_certainty(used: set[str]) -> list[str]:
+    """Astro analogue of "zones must be certain": what a feature depends on must be known."""
+    problems = []
+    needs_time = any(
+        p.endswith(".house") or p == "lagna_sign" or p.endswith(".houses_ruled") for p in used
+    )
+    if needs_time and "time_confidence" not in used:
+        problems.append("uses houses or the lagna without requiring time_confidence (exact time)")
+    if any(p.startswith(("mahadasha.", "antardasha.")) for p in used) and (
+        "moon_nakshatra_uncertain" not in used
+    ):
+        problems.append("uses the dasha without requiring moon_nakshatra_uncertain == false")
+    return problems
 
 
 def lint_rules(rules: list[Rule], tiers: dict[str, Tier]) -> list[str]:
@@ -53,8 +69,10 @@ def lint_rules(rules: list[Rule], tiers: dict[str, Tier]) -> list[str]:
             problems.append(f"{where}: source.work and source.locator are required")
 
         used = referenced_vars(rule.when)
-        for path in sorted(used - FEATURE_PATHS):
+        for path in sorted(used - FEATURE_PATHS[rule.engine]):
             problems.append(f"{where}: unknown feature {path!r}")
+        if rule.engine == "astro":
+            problems.extend(f"{where}: {problem}" for problem in _astro_certainty(used))
         for path in sorted(p for p in used if p.endswith("_zone")):
             if f"{path}_certain" not in used:
                 problems.append(

@@ -1,5 +1,6 @@
 """Evaluate rules against features: deterministic selection with citations."""
 
+from grahrekha_engine.contracts.astro import AstroFeaturesV1
 from grahrekha_engine.contracts.palm import PalmFeaturesV1
 from grahrekha_engine.contracts.rules import FiredRuleV1, SourceV1
 from grahrekha_engine.rules.jsonlogic import evaluate
@@ -7,7 +8,9 @@ from grahrekha_engine.rules.model import Rule, Status
 
 
 def evaluate_rules(
-    features: PalmFeaturesV1, rules: list[Rule], statuses: set[Status] | None = None
+    features: PalmFeaturesV1 | AstroFeaturesV1,
+    rules: list[Rule],
+    statuses: set[Status] | None = None,
 ) -> list[FiredRuleV1]:
     """Rules whose condition holds, minus those excluded by a stronger fired rule.
 
