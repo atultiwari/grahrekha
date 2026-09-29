@@ -199,3 +199,17 @@ Statuses: **Accepted** / **Proposed** / **Superseded**.
   - Tiers are re-measured whenever the pipeline changes.
 - **Why:** a reading that changes when you retake the photo destroys trust, and would make the validation study measure noise.
 - **Revisit:** after multi-photo capture (median of 2–3 photos per hand) and new retest data.
+
+## D-016: The analysis engine has no outbound network access
+**Status:** Accepted (2026-09-30)
+
+- **Context:**
+  - MediaPipe's native library contains Google usage-logging ("clearcut") code.
+  - During dataset building it tried, and failed, to upload.
+  - There is no documented opt-out, and we cannot verify what it would send.
+- **Decision:**
+  - In every deployment the engine runs on a network **without internet egress**. It only accepts requests from the web layer.
+  - Docker Compose puts it on an `internal` network, and CI asserts that the engine container cannot reach the internet and is not published on the host.
+  - Any hosted demo must apply an equivalent egress-deny rule.
+- **Local development without Docker** is not isolated. Contributors who care should block the engine process in their firewall.
+- **Revisit:** if MediaPipe documents an opt-out, or we move hand landmarks to our own ONNX model.

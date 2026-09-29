@@ -5,8 +5,15 @@ description = "GrahRekha data preparation, evaluation and (later) training"
 license = "Apache-2.0"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+  "grahrekha-engine",
+  "numpy>=2.0",
+  "opencv-python-headless>=4.10",
   "pillow>=11.0",
   "pyarrow>=18.0",
+  "scikit-image>=0.24",
+  "segmentation-models-pytorch>=0.4",
+  "torch>=2.5",
+  "torchvision>=0.20",
 ]
 
 [dependency-groups]
@@ -34,3 +41,14 @@ files = ["src", "tests"]
 [[tool.mypy.overrides]]
 module = ["pyarrow", "pyarrow.*"]
 ignore_missing_imports = true
+
+[tool.uv.sources]
+grahrekha-engine = { path = "../services/engine", editable = true }
+
+[[tool.mypy.overrides]]
+module = ["cv2", "cv2.*", "scipy", "scipy.*", "skimage", "skimage.*", "segmentation_models_pytorch", "segmentation_models_pytorch.*", "mediapipe", "mediapipe.*", "onnxruntime", "onnxruntime.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["grahrekha_ml.labels"]
+disallow_untyped_calls = false

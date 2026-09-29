@@ -1,9 +1,12 @@
 # One-command local stack: `docker compose up --build`, then open http://localhost:3000
 # No cloud accounts needed.
 #
-# Ports bind to 127.0.0.1 only, so nothing is reachable from your LAN or café Wi-Fi.
-# The default secret is for local development only. Set ENGINE_SHARED_SECRET in your
-# shell or a root .env file for anything else.
+# Privacy (D-016): the engine sits on an INTERNAL network with no internet access. It only
+# receives requests from the web app, and it cannot phone home, even though MediaPipe's
+# native library contains Google usage-logging code with no documented opt-out.
+#
+# Ports bind to 127.0.0.1 only, so nothing is reachable from your LAN. The default secret
+# is for local development only; set ENGINE_SHARED_SECRET in a root .env for anything else.
 services:
   engine:
     build: ./services/engine
@@ -12,7 +15,7 @@ services:
       ENGINE_RULES_DIR: /app/rules
     volumes:
       - ./rules:/app/rules:ro
-    ports: ["127.0.0.1:8000:8000"]
+    networks: [backend]
 
   web:
     build:
@@ -22,8 +25,14 @@ services:
       ENGINE_URL: http://engine:8000
       ENGINE_SHARED_SECRET: ${ENGINE_SHARED_SECRET:-local-dev-secret}
     ports: ["127.0.0.1:3000:3000"]
+    networks: [backend, frontend]
     depends_on:
       engine:
         condition: service_healthy
     # A var/ volume (SQLite + uploads) is added in Phase 5, with a container
     # directory owned by the non-root user.
+
+networks:
+  backend:
+    internal: true # no route to the internet
+  frontend: {}

@@ -87,8 +87,16 @@ jobs:
           for i in $(seq 1 30); do body=$(curl -fsS http://localhost:3000/api/health) && break; sleep 2; done
           echo "$body"
           test "$body" = '{"web":"ok","engine":{"status":"ok","version":"0.1.0"}}'
-      - name: Engine protects /v1 routes
-        run: test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8000/v1/ping)" = "401"
+      - name: Engine protects /v1 routes (checked from inside the web container)
+        run: |
+          docker compose exec -T web node -e "fetch('http://engine:8000/v1/ping').then(r => process.exit(r.status === 401 ? 0 : 1))"
+      - name: Engine has no internet access (D-016)
+        run: |
+          if docker compose exec -T engine python -c "import urllib.request; urllib.request.urlopen('https://www.google.com', timeout=5)"; then
+            echo "engine reached the internet"; exit 1
+          fi
+      - name: Engine is not published on the host
+        run: test "$(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://localhost:8000/healthz || true)" = "000"
       - if: failure()
         run: docker compose logs
       - if: always()
