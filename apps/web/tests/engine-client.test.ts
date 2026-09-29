@@ -39,4 +39,10 @@ describe("engine client", () => {
     await createEngineClient({ baseUrl: "http://engine/", secret: "s", fetchFn }).health();
     expect(fetchFn.mock.calls[0]?.[0]).toBe("http://engine/healthz");
   });
+
+  it("maps a non-JSON 200 body to a 502 EngineError", async () => {
+    const fetchFn = vi.fn().mockResolvedValue(new Response("<html>proxy error</html>", { status: 200 }));
+    const engine = createEngineClient({ baseUrl: "http://engine", secret: "s", fetchFn });
+    await expect(engine.health()).rejects.toMatchObject({ name: "EngineError", status: 502 });
+  });
 });

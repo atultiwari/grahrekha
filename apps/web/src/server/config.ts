@@ -4,7 +4,7 @@ const EnvSchema = z.object({
   ENGINE_URL: z.string().url("ENGINE_URL must be a valid URL").default("http://localhost:8000"),
   ENGINE_SHARED_SECRET: z
     .string({ required_error: "ENGINE_SHARED_SECRET is required (see .env.example)" })
-    .min(1, "ENGINE_SHARED_SECRET must not be empty"),
+    .refine((value) => value.trim().length > 0, "ENGINE_SHARED_SECRET must not be empty"),
 });
 
 export interface ServerConfig {

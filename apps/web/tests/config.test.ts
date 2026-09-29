@@ -14,4 +14,8 @@ describe("server config", () => {
   it("rejects a malformed engine URL", () => {
     expect(() => loadServerConfig({ ENGINE_URL: "not a url", ENGINE_SHARED_SECRET: "x" })).toThrow(/ENGINE_URL/);
   });
+
+  it("rejects a whitespace-only secret, matching the engine's own validation", () => {
+    expect(() => loadServerConfig({ ENGINE_SHARED_SECRET: "   " })).toThrow(/ENGINE_SHARED_SECRET/);
+  });
 });

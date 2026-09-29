@@ -36,7 +36,13 @@ export function createEngineClient({ baseUrl, secret, fetchFn = fetch, timeoutMs
     if (!response.ok) {
       throw new EngineError(`engine returned ${response.status} for ${path}`, response.status);
     }
-    const parsed = schema.safeParse(await response.json());
+    let body: unknown;
+    try {
+      body = await response.json();
+    } catch {
+      throw new EngineError(`engine returned non-JSON for ${path}`, 502);
+    }
+    const parsed = schema.safeParse(body);
     if (!parsed.success) {
       throw new EngineError(`engine response for ${path} broke the contract`, 502);
     }
