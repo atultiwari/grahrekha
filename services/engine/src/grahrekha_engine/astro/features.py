@@ -60,6 +60,12 @@ def houses_ruled(planet: Planet | None, lagna: Sign | None) -> list[int]:
     )
 
 
+def _lagna_margin(chart: AstroChartV1) -> float | None:
+    if chart.lagna_degree is None:
+        return None
+    return round(min(chart.lagna_degree, 30 - chart.lagna_degree), 4)
+
+
 def astro_features(chart: AstroChartV1) -> AstroFeaturesV1:
     lagna = chart.lagna_sign if chart.time_confidence == "exact" else None
     planets = {
@@ -75,6 +81,7 @@ def astro_features(chart: AstroChartV1) -> AstroFeaturesV1:
         time_confidence=chart.time_confidence,
         moon_nakshatra_uncertain=chart.moon_nakshatra_uncertain,
         lagna_sign=lagna,
+        lagna_margin_deg=_lagna_margin(chart) if lagna else None,
         planets=planets,
         mahadasha=DashaLordFeaturesV1(
             lord=chart.current_mahadasha,

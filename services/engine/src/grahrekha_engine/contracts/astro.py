@@ -126,6 +126,9 @@ class AstroFeaturesV1(Contract):
     time_confidence: TimeConfidence
     moon_nakshatra_uncertain: bool
     lagna_sign: Sign | None = None
+    # Degrees from the lagna to the nearest sign boundary. The lagna moves ~1 deg per 4
+    # minutes, so a small margin means a slightly wrong birth time changes every house.
+    lagna_margin_deg: float | None = None
     planets: dict[Planet, AstroPlanetFeaturesV1]
     mahadasha: DashaLordFeaturesV1
     antardasha: DashaLordFeaturesV1

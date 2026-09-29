@@ -6,7 +6,13 @@ from grahrekha_engine.contracts.astro import AstroChartV1, DashaPeriodV1, Planet
 PLANETS = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]
 
 
-def _chart(lagna: str | None, houses: dict[str, int | None], md: str, ad: str) -> AstroChartV1:
+def _chart(
+    lagna: str | None,
+    houses: dict[str, int | None],
+    md: str,
+    ad: str,
+    lagna_degree: float = 15.0,
+) -> AstroChartV1:
     planets = [
         PlanetPositionV1(
             planet=name,
@@ -28,7 +34,7 @@ def _chart(lagna: str | None, houses: dict[str, int | None], md: str, ad: str) -
         utc_offset_hours=5.5,
         time_confidence="exact" if lagna else "unknown",
         lagna_sign=lagna,
-        lagna_degree=1.0 if lagna else None,
+        lagna_degree=lagna_degree if lagna else None,
         navamsa_lagna_sign="Aries" if lagna else None,
         planets=planets,
         moon_nakshatra="Ashwini",
@@ -66,3 +72,13 @@ def test_unknown_time_leaves_houses_and_lordship_empty() -> None:
     features = astro_features(_chart(None, {}, md="Venus", ad="Sun"))
     assert features.planets["Sun"].house is None
     assert features.mahadasha.lord == "Venus" and features.mahadasha.houses_ruled == []
+
+
+def test_lagna_margin_is_the_distance_to_the_nearest_sign_boundary() -> None:
+    assert (
+        astro_features(_chart("Leo", {}, "Mars", "Sun", lagna_degree=0.99)).lagna_margin_deg == 0.99
+    )
+    assert (
+        astro_features(_chart("Leo", {}, "Mars", "Sun", lagna_degree=28.5)).lagna_margin_deg == 1.5
+    )
+    assert astro_features(_chart(None, {}, "Mars", "Sun")).lagna_margin_deg is None

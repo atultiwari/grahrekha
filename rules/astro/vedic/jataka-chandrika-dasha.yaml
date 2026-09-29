@@ -21,6 +21,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: moon_nakshatra_uncertain}, false]
       - or:
           - in: [1, {var: mahadasha.houses_ruled}]
@@ -59,6 +60,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: moon_nakshatra_uncertain}, false]
       - or:
           - in: [5, {var: mahadasha.houses_ruled}]
@@ -87,6 +89,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: moon_nakshatra_uncertain}, false]
       - or:
           - in: [3, {var: mahadasha.houses_ruled}]
@@ -122,6 +125,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: moon_nakshatra_uncertain}, false]
       - in: [{var: mahadasha.lord}, [Jupiter, Venus, Mercury, Moon]]
       - or:

@@ -173,8 +173,13 @@ def test_real_chart_fires_the_expected_astro_rules(ephemeris_path: Path) -> None
     from grahrekha_engine.rules.model import load_rules
 
     rules = load_rules(Path(__file__).resolve().parents[4] / "rules/astro")
-    chart = compute_chart(KARMALA, ephemeris_path, reference_date=date(2026, 9, 30))
-    features = astro_features(chart)
+    # 09:10 puts the lagna 0.99 deg into Leo: a few minutes' error flips every house, so
+    # no house or lordship rule may fire. 09:30 puts it 5.6 deg in: safe.
+    near_cusp = astro_features(compute_chart(KARMALA, ephemeris_path, date(2026, 9, 30)))
+    assert near_cusp.lagna_margin_deg is not None and near_cusp.lagna_margin_deg < 2
+    assert evaluate_rules(near_cusp, rules) == []
+    later = KARMALA.model_copy(update={"birth_time": time(9, 30)})
+    features = astro_features(compute_chart(later, ephemeris_path, date(2026, 9, 30)))
     assert features.mahadasha.lord == "Jupiter" and features.mahadasha.houses_ruled == [5, 8]
     fired = {f.id for f in evaluate_rules(features, rules)}
     assert {"astro.jc.mahadasha_lord_rules_trikona", "astro.bj.sun_11th_house"} <= fired

@@ -46,6 +46,8 @@ def _astro_certainty(used: set[str]) -> list[str]:
     )
     if needs_time and "time_confidence" not in used:
         problems.append("uses houses or the lagna without requiring time_confidence (exact time)")
+    if needs_time and "lagna_margin_deg" not in used:
+        problems.append("uses houses or the lagna without requiring a lagna_margin_deg minimum")
     if any(p.startswith(("mahadasha.", "antardasha.")) for p in used) and (
         "moon_nakshatra_uncertain" not in used
     ):

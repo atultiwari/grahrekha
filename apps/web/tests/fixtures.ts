@@ -108,6 +108,7 @@ export function readingFixture() {
       time_confidence: "exact",
       moon_nakshatra_uncertain: false,
       lagna_sign: "Leo",
+      lagna_margin_deg: 5.6,
       planets: {
         Moon: { sign: "Cancer", house: 12, navamsa_sign: "Scorpio", retrograde: false },
       },

@@ -8,7 +8,12 @@ from tests.astro.test_features import _chart
 
 RULES_DIR = Path(__file__).resolve().parents[4] / "rules"
 TIERS: dict[str, Tier] = {"planets.Sun.house": "reliable"}
-EXACT = {"==": [{"var": "time_confidence"}, "exact"]}
+EXACT = {
+    "and": [
+        {"==": [{"var": "time_confidence"}, "exact"]},
+        {">=": [{"var": "lagna_margin_deg"}, 2]},
+    ]
+}
 MOON_CERTAIN = {"==": [{"var": "moon_nakshatra_uncertain"}, False]}
 
 
@@ -43,6 +48,18 @@ def test_house_rules_must_require_an_exact_birth_time() -> None:
     assert any("moon_nakshatra_uncertain" in p for p in problems)
 
 
+def test_house_rules_must_require_a_safe_lagna_margin() -> None:
+    no_margin = _astro_rule(
+        {
+            "and": [
+                {"==": [{"var": "time_confidence"}, "exact"]},
+                {"==": [{"var": "planets.Sun.house"}, 10]},
+            ]
+        }
+    )
+    assert any("lagna_margin_deg" in p for p in lint_rules([no_margin], TIERS))
+
+
 def test_dasha_rules_must_require_a_certain_moon() -> None:
     bad = _astro_rule({"==": [{"var": "mahadasha.lord"}, "Jupiter"]})
     assert any("moon_nakshatra_uncertain" in p for p in lint_rules([bad], TIERS))
@@ -54,6 +71,8 @@ def test_astro_rules_fire_on_astro_features() -> None:
     rule = _astro_rule({"and": [EXACT, {"==": [{"var": "planets.Sun.house"}, 10]}]})
     features = astro_features(_chart("Leo", {"Sun": 10}, md="Mars", ad="Saturn"))
     assert [f.id for f in evaluate_rules(features, [rule])] == ["astro.test.rule"]
+    near_cusp = astro_features(_chart("Leo", {"Sun": 10}, md="Mars", ad="Saturn", lagna_degree=0.5))
+    assert evaluate_rules(near_cusp, [rule]) == []
     unknown_time = astro_features(_chart(None, {"Sun": 10}, md="Mars", ad="Saturn"))
     assert evaluate_rules(unknown_time, [rule]) == []
 

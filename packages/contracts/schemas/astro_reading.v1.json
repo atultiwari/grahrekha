@@ -190,6 +190,18 @@
         "antardasha": {
           "$ref": "#/$defs/DashaLordFeaturesV1"
         },
+        "lagna_margin_deg": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lagna Margin Deg"
+        },
         "lagna_sign": {
           "anyOf": [
             {
@@ -264,6 +276,7 @@
         "time_confidence",
         "moon_nakshatra_uncertain",
         "lagna_sign",
+        "lagna_margin_deg",
         "planets",
         "mahadasha",
         "antardasha"

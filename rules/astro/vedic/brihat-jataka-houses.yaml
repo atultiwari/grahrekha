@@ -21,6 +21,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Sun.house}, 3]
   statement:
     en: >-
@@ -45,6 +46,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Sun.house}, 10]
   statement:
     en: >-
@@ -68,6 +70,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Sun.house}, 11]
   statement:
     en: >-
@@ -91,6 +94,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Moon.house}, 2]
   statement:
     en: >-
@@ -115,6 +119,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Moon.house}, 4]
   statement:
     en: >-
@@ -140,6 +145,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Moon.house}, 10]
   statement:
     en: >-
@@ -164,6 +170,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Moon.house}, 11]
   statement:
     en: >-
@@ -187,6 +194,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Mercury.house}, 1]
   statement:
     en: >-
@@ -211,6 +219,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Mercury.house}, 2]
   statement:
     en: >-
@@ -234,6 +243,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Mercury.house}, 5]
   statement:
     en: >-
@@ -259,6 +269,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Mercury.house}, 7]
   statement:
     en: >-
@@ -282,6 +293,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Mercury.house}, 8]
   statement:
     en: >-
@@ -305,6 +317,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Jupiter.house}, 1]
   statement:
     en: >-
@@ -331,6 +344,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Jupiter.house}, 2]
   statement:
     en: >-
@@ -357,6 +371,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Jupiter.house}, 5]
   statement:
     en: >-
@@ -382,6 +397,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Jupiter.house}, 11]
   statement:
     en: >-
@@ -407,6 +423,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Venus.house}, 1]
   statement:
     en: >-
@@ -431,6 +448,7 @@
   when:
     and:
       - "==": [{var: time_confidence}, exact]
+      - ">=": [{var: lagna_margin_deg}, 2]
       - "==": [{var: planets.Saturn.house}, 1]
       - in: [{var: lagna_sign}, [Libra, Sagittarius, Capricorn, Aquarius, Pisces]]
   statement:

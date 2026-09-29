@@ -181,6 +181,12 @@ export function AstroPanel() {
       {result && "chart" in result && (
         <>
           <Chart chart={result.chart} />
+          {result.features.lagna_margin_deg !== null && result.features.lagna_margin_deg < 2 && (
+            <p className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100">
+              The lagna is only {result.features.lagna_margin_deg.toFixed(2)}° from the next sign. A birth time a few
+              minutes off would change every house, so house and lordship rules are withheld.
+            </p>
+          )}
           <div className="space-y-2 text-sm">
             <h3 className="font-semibold">
               Reading (unreviewed rules, rule base {result.rules.rulebase_version})

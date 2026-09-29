@@ -35,8 +35,9 @@ def test_production_mode_fires_only_approved_rules(ephemeris_path) -> None:  # t
 def test_lab_mode_fires_unreviewed_rules(ephemeris_path) -> None:  # type: ignore[no-untyped-def]
     settings = Settings(shared_secret=SECRET, models_dir=ephemeris_path.parents[1])
     client = TestClient(create_app(settings))
+    safe_lagna = BODY | {"birth": BODY["birth"] | {"birth_time": "09:30:00"}}  # type: ignore[operator]
     body = client.post(
-        "/v1/astro/reading", headers=HEADERS, json=BODY | {"include_unreviewed": True}
+        "/v1/astro/reading", headers=HEADERS, json=safe_lagna | {"include_unreviewed": True}
     ).json()
     fired = {rule["id"] for rule in body["rules"]["fired"]}
     assert "astro.jc.mahadasha_lord_rules_trikona" in fired

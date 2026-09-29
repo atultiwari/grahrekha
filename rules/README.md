@@ -64,7 +64,7 @@ Licence: **CC BY 4.0** (see `LICENSE-CONTENT`). The quoted source texts themselv
 - `time_confidence` and `moon_nakshatra_uncertain`.
 
 The lint applies the astro version of "zones must be certain":
-- Rules that use houses, the lagna or lordship must require `time_confidence == exact`.
+- Rules that use houses, the lagna or lordship must require `time_confidence == exact` **and** `lagna_margin_deg >= 2`. The lagna moves about 1° every 4 minutes, so near a sign boundary a slightly wrong time changes every house.
 - Rules that use the dasha must require `moon_nakshatra_uncertain == false`.
 
 The two Jyotish sources are OCR scans, so their quotes are checked at ≥ 90% similarity rather than verbatim. Why these sources were chosen: [research/04-jyotish-sources.md](../research/04-jyotish-sources.md).
