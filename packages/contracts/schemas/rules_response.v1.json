@@ -76,7 +76,9 @@
         "strength",
         "statement",
         "source",
-        "status"
+        "status",
+        "mapping_note",
+        "validity_blocker"
       ],
       "title": "FiredRuleV1",
       "type": "object"
@@ -119,7 +121,9 @@
       },
       "required": [
         "work",
-        "locator"
+        "locator",
+        "edition",
+        "quote"
       ],
       "title": "SourceV1",
       "type": "object"

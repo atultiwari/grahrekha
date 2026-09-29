@@ -9,7 +9,11 @@ from pydantic import BaseModel, ConfigDict
 
 
 class Contract(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
+    # Serialization-mode JSON Schema marks defaulted fields as required: responses always
+    # include them, so generated TypeScript types need not treat them as optional.
+    model_config = ConfigDict(
+        extra="forbid", frozen=True, json_schema_serialization_defaults_required=True
+    )
 
 
 class HealthResponse(Contract):

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { HealthResponseV1Schema, type HealthResponseV1 } from "../src";
-import { buildIndex, exportName, stripNestedTitles } from "../scripts/gen";
+import { buildIndex, exportName, inlineRefs, stripNestedTitles } from "../scripts/gen";
+import { PalmAnalysisV1Schema } from "../src";
 
 describe("generated contracts", () => {
   it("validates a well-formed health response", () => {
@@ -35,5 +36,16 @@ describe("generated contracts", () => {
     expect(buildIndex([{ module: "a.v1", source: a }, { module: "b.v1", source: b }])).toBe(
       'export type { Shared, A } from "./a.v1";\nexport { ASchema } from "./a.v1";\nexport type { B } from "./b.v1";',
     );
+  });
+
+  it("inlines $defs so nested models are validated, not z.any()", () => {
+    const schema = { $defs: { Inner: { type: "object", properties: { n: { type: "number" } } } },
+      properties: { inner: { $ref: "#/$defs/Inner" } } };
+    expect(inlineRefs(schema)).toEqual({ properties: { inner: { type: "object", properties: { n: { type: "number" } } } } });
+  });
+
+  it("the generated palm analysis validator rejects malformed nested data", () => {
+    const bad = { schema_version: "palm_analysis.v1", gate: { passed: "yes" }, features: null, overlay: null, feature_hash: null };
+    expect(PalmAnalysisV1Schema.safeParse(bad).success).toBe(false);
   });
 });

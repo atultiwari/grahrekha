@@ -266,7 +266,19 @@
       },
       "required": [
         "name",
-        "present"
+        "present",
+        "source",
+        "confidence",
+        "length",
+        "start_zone",
+        "end_zone",
+        "start_zone_certain",
+        "end_zone_certain",
+        "curvature",
+        "slope_deg",
+        "breaks",
+        "gaps",
+        "sweep"
       ],
       "title": "LineFeaturesV1",
       "type": "object"
@@ -281,16 +293,11 @@
         },
         "landmarks": {
           "items": {
+            "items": {
+              "type": "number"
+            },
             "maxItems": 2,
             "minItems": 2,
-            "prefixItems": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "number"
-              }
-            ],
             "type": "array"
           },
           "title": "Landmarks",
@@ -300,16 +307,11 @@
           "additionalProperties": {
             "items": {
               "items": {
+                "items": {
+                  "type": "number"
+                },
                 "maxItems": 2,
                 "minItems": 2,
-                "prefixItems": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "number"
-                  }
-                ],
                 "type": "array"
               },
               "type": "array"
@@ -401,10 +403,12 @@
         }
       },
       "required": [
+        "schema_version",
         "hand",
         "mirrored",
         "hand_geometry",
         "lines",
+        "head_life_joined",
         "pipeline"
       ],
       "title": "PalmFeaturesV1",
@@ -458,7 +462,11 @@
     }
   },
   "required": [
-    "gate"
+    "schema_version",
+    "gate",
+    "features",
+    "overlay",
+    "feature_hash"
   ],
   "title": "PalmAnalysisV1",
   "type": "object"

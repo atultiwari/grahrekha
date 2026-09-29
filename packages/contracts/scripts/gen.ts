@@ -7,7 +7,6 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { compile } from "json-schema-to-typescript";
 import { jsonSchemaToZod } from "json-schema-to-zod";
 
 const pkgDir = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -37,6 +36,32 @@ export function stripNestedTitles(schema: unknown, isRoot = true): unknown {
     .filter(([key]) => isRoot || key !== "title")
     .map(([key, value]) => [key, stripNestedTitles(value, false)]);
   return Object.fromEntries(entries);
+}
+
+/**
+ * Inline local `$ref`s ("#/$defs/X"). json-schema-to-zod does not resolve them and
+ * would emit z.any() for every nested model, silently skipping validation.
+ */
+export function inlineRefs(schema: unknown, defs?: Record<string, unknown>): unknown {
+  const root = schema as { $defs?: Record<string, unknown> };
+  const table = defs ?? root?.$defs ?? {};
+  const walk = (node: unknown, stack: string[]): unknown => {
+    if (Array.isArray(node)) return node.map((item) => walk(item, stack));
+    if (node === null || typeof node !== "object") return node;
+    const obj = node as Record<string, unknown>;
+    const ref = obj.$ref;
+    if (typeof ref === "string" && ref.startsWith("#/$defs/")) {
+      const name = ref.slice("#/$defs/".length);
+      if (stack.includes(name)) throw new Error(`recursive contract model: ${name}`);
+      return walk(table[name], [...stack, name]);
+    }
+    return Object.fromEntries(
+      Object.entries(obj)
+        .filter(([key]) => key !== "$defs")
+        .map(([key, value]) => [key, walk(value, stack)]),
+    );
+  };
+  return walk(schema, []);
 }
 
 /** Names a generated file exports, split into types (interface/type) and values (const). */
@@ -78,11 +103,23 @@ async function main(): Promise<void> {
   const files: { module: string; source: string }[] = [];
   for (const file of readdirSync(schemaDir).filter((f) => f.endsWith(".json")).sort()) {
     const contract = basename(file, ".json");
-    const name = exportName(contract);
-    const schema = stripNestedTitles(JSON.parse(readFileSync(join(schemaDir, file), "utf8"))) as object;
-    const ts = await compile({ ...schema, title: name }, name, { bannerComment: "", additionalProperties: false });
-    const zod = jsonSchemaToZod(schema, { name: `${name}Schema`, module: "esm" });
-    const source = `${HEADER}${ts}\n${zod}\n`;
+    const raw = JSON.parse(readFileSync(join(schemaDir, file), "utf8")) as {
+      $defs?: Record<string, object>;
+    };
+    const schema = stripNestedTitles(raw) as { $defs?: Record<string, object> };
+    const defs = schema.$defs ?? {};
+    // One validator per nested model and one for the contract itself. Types are derived
+    // from the validators (z.infer), so compile-time types and runtime validation can
+    // never disagree.
+    const models: [string, object][] = [
+      ...Object.entries(defs).map(([defName, def]) => [defName, def] as [string, object]),
+      [exportName(contract), schema],
+    ];
+    const blocks = models.map(([name, model]) => {
+      const zod = jsonSchemaToZod(inlineRefs(model, defs) as object, { name: `${name}Schema` });
+      return `export ${zod}\nexport type ${name} = z.infer<typeof ${name}Schema>;`;
+    });
+    const source = `${HEADER}import { z } from "zod";\n\n${blocks.join("\n\n")}\n`;
     writeFileSync(join(outDir, `${contract}.ts`), source);
     files.push({ module: contract, source });
   }

@@ -15,7 +15,9 @@ def export_schemas(out_dir: Path) -> list[Path]:
     written = []
     for name, model in CONTRACTS:
         path = out_dir / f"{name}.json"
-        schema = model.model_json_schema()
+        # Serialization mode: fields with defaults are always present in responses, so
+        # they are required in the generated TypeScript types.
+        schema = model.model_json_schema(mode="serialization")
         path.write_text(json.dumps(schema, indent=2, sort_keys=True) + "\n")
         written.append(path)
     return written

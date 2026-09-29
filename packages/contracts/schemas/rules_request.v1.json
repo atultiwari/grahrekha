@@ -209,7 +209,19 @@
       },
       "required": [
         "name",
-        "present"
+        "present",
+        "source",
+        "confidence",
+        "length",
+        "start_zone",
+        "end_zone",
+        "start_zone_certain",
+        "end_zone_certain",
+        "curvature",
+        "slope_deg",
+        "breaks",
+        "gaps",
+        "sweep"
       ],
       "title": "LineFeaturesV1",
       "type": "object"
@@ -274,10 +286,12 @@
         }
       },
       "required": [
+        "schema_version",
         "hand",
         "mirrored",
         "hand_geometry",
         "lines",
+        "head_life_joined",
         "pipeline"
       ],
       "title": "PalmFeaturesV1",
@@ -296,7 +310,8 @@
     }
   },
   "required": [
-    "features"
+    "features",
+    "include_unreviewed"
   ],
   "title": "RulesRequestV1",
   "type": "object"

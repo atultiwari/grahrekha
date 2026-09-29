@@ -51,8 +51,8 @@ def _overlay(
     rect: RectifiedPalm,
     traces: dict[LineName, LineTrace],
 ) -> OverlayV1:
-    def pts(a: np.ndarray) -> list[tuple[float, float]]:
-        return [(round(float(x), 1), round(float(y), 1)) for x, y in a]
+    def pts(a: np.ndarray) -> list[list[float]]:
+        return [[round(float(x), 1), round(float(y), 1)] for x, y in a]
 
     return OverlayV1(
         width=int(image_shape[1]),

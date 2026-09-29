@@ -1,6 +1,6 @@
 """Palm feature contracts (docs/ARCHITECTURE.md §4.5). Units are palm lengths."""
 
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import Field
 
@@ -75,13 +75,18 @@ class GateReportV1(Contract):
     metrics: dict[str, float]
 
 
+# (x, y) as a 2-element array: JSON Schema tuples (prefixItems) are not validated by the
+# generated zod schemas, fixed-length arrays are.
+Point = Annotated[list[float], Field(min_length=2, max_length=2)]
+
+
 class OverlayV1(Contract):
     """Everything needed to draw on the user's ORIGINAL photo (pixel coordinates)."""
 
     width: int
     height: int
-    landmarks: list[tuple[float, float]]
-    lines: dict[LineName, list[list[tuple[float, float]]]]  # line -> segments -> points
+    landmarks: list[Point]
+    lines: dict[LineName, list[list[Point]]]  # line -> segments -> points
 
 
 class PalmAnalysisV1(Contract):
