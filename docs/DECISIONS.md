@@ -187,3 +187,15 @@ Statuses: **Accepted** / **Proposed** / **Superseded**.
   - `docs/RESOURCES-REGISTRY.md` lists every dataset, model, repo and tool, with a column for the owner's decision.
   - Before any production use, each item must move to "cleared" in the registry.
   - Personal photos scraped from social media are **not** collected. Only published datasets are used.
+
+## D-015: Rules may only use features that are reliable across repeat photos
+**Status:** Accepted (evidence: docs/eval/features-v1.md, 2026-09-29)
+
+- **Context:** test–retest on repeat photos of the same hand showed that pose variation between photos is comparable to the differences between people for hand-shape measures. Palm shape (0.57), index vs ring (0.62), finger length (0.68) and element (0.72) are not reproducible from one photo; nor is the fate line (0.68).
+- **Decision:** every feature has a reliability tier (reliable / moderate / experimental), set from test–retest data.
+  - Production rules may use **reliable** features, and **moderate** ones only when the zone is certain and the wording is soft.
+  - **Experimental** features are used only in the research arm, labelled as such.
+  - A CI lint on the rule base will enforce the tiers.
+  - Tiers are re-measured whenever the pipeline changes.
+- **Why:** a reading that changes when you retake the photo destroys trust, and would make the validation study measure noise.
+- **Revisit:** after multi-photo capture (median of 2–3 photos per hand) and new retest data.

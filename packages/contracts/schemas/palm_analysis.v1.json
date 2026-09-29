@@ -1,0 +1,452 @@
+{
+  "$defs": {
+    "GateIssueV1": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "GateIssueV1",
+      "type": "object"
+    },
+    "GateReportV1": {
+      "additionalProperties": false,
+      "properties": {
+        "metrics": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Metrics",
+          "type": "object"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "reasons": {
+          "items": {
+            "$ref": "#/$defs/GateIssueV1"
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/GateIssueV1"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "passed",
+        "reasons",
+        "warnings",
+        "metrics"
+      ],
+      "title": "GateReportV1",
+      "type": "object"
+    },
+    "HandGeometryV1": {
+      "additionalProperties": false,
+      "properties": {
+        "digit_ratio_2d4d": {
+          "title": "Digit Ratio 2D4D",
+          "type": "number"
+        },
+        "element": {
+          "enum": [
+            "earth",
+            "air",
+            "fire",
+            "water"
+          ],
+          "title": "Element",
+          "type": "string"
+        },
+        "finger_length": {
+          "enum": [
+            "short",
+            "long"
+          ],
+          "title": "Finger Length",
+          "type": "string"
+        },
+        "finger_to_palm_ratio": {
+          "title": "Finger To Palm Ratio",
+          "type": "number"
+        },
+        "index_vs_ring": {
+          "enum": [
+            "index_longer",
+            "ring_longer",
+            "equal"
+          ],
+          "title": "Index Vs Ring",
+          "type": "string"
+        },
+        "palm_length_width_ratio": {
+          "title": "Palm Length Width Ratio",
+          "type": "number"
+        },
+        "palm_shape": {
+          "enum": [
+            "square",
+            "long"
+          ],
+          "title": "Palm Shape",
+          "type": "string"
+        },
+        "thumb_opening_deg": {
+          "title": "Thumb Opening Deg",
+          "type": "number"
+        }
+      },
+      "required": [
+        "palm_length_width_ratio",
+        "finger_to_palm_ratio",
+        "palm_shape",
+        "finger_length",
+        "element",
+        "digit_ratio_2d4d",
+        "index_vs_ring",
+        "thumb_opening_deg"
+      ],
+      "title": "HandGeometryV1",
+      "type": "object"
+    },
+    "LineFeaturesV1": {
+      "additionalProperties": false,
+      "properties": {
+        "breaks": {
+          "default": 0,
+          "title": "Breaks",
+          "type": "integer"
+        },
+        "confidence": {
+          "default": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "curvature": {
+          "default": 0.0,
+          "title": "Curvature",
+          "type": "number"
+        },
+        "end_zone": {
+          "anyOf": [
+            {
+              "enum": [
+                "percussion",
+                "under_index",
+                "under_middle",
+                "under_ring",
+                "under_pinky",
+                "thumb_index_edge",
+                "wrist",
+                "thenar",
+                "hypothenar",
+                "palm_centre"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Zone"
+        },
+        "gaps": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Gaps",
+          "type": "array"
+        },
+        "length": {
+          "default": 0.0,
+          "title": "Length",
+          "type": "number"
+        },
+        "name": {
+          "enum": [
+            "heart",
+            "head",
+            "life",
+            "fate"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "present": {
+          "title": "Present",
+          "type": "boolean"
+        },
+        "slope_deg": {
+          "default": 0.0,
+          "title": "Slope Deg",
+          "type": "number"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "model",
+                "classical"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "start_zone": {
+          "anyOf": [
+            {
+              "enum": [
+                "percussion",
+                "under_index",
+                "under_middle",
+                "under_ring",
+                "under_pinky",
+                "thumb_index_edge",
+                "wrist",
+                "thenar",
+                "hypothenar",
+                "palm_centre"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Zone"
+        },
+        "sweep": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sweep"
+        }
+      },
+      "required": [
+        "name",
+        "present"
+      ],
+      "title": "LineFeaturesV1",
+      "type": "object"
+    },
+    "OverlayV1": {
+      "additionalProperties": false,
+      "description": "Everything needed to draw on the user's ORIGINAL photo (pixel coordinates).",
+      "properties": {
+        "height": {
+          "title": "Height",
+          "type": "integer"
+        },
+        "landmarks": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Landmarks",
+          "type": "array"
+        },
+        "lines": {
+          "additionalProperties": {
+            "items": {
+              "items": {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "propertyNames": {
+            "enum": [
+              "heart",
+              "head",
+              "life",
+              "fate"
+            ]
+          },
+          "title": "Lines",
+          "type": "object"
+        },
+        "width": {
+          "title": "Width",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "landmarks",
+        "lines"
+      ],
+      "title": "OverlayV1",
+      "type": "object"
+    },
+    "PalmFeaturesV1": {
+      "additionalProperties": false,
+      "properties": {
+        "hand": {
+          "enum": [
+            "left",
+            "right"
+          ],
+          "title": "Hand",
+          "type": "string"
+        },
+        "hand_geometry": {
+          "$ref": "#/$defs/HandGeometryV1"
+        },
+        "head_life_joined": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Head Life Joined"
+        },
+        "lines": {
+          "additionalProperties": {
+            "$ref": "#/$defs/LineFeaturesV1"
+          },
+          "propertyNames": {
+            "enum": [
+              "heart",
+              "head",
+              "life",
+              "fate"
+            ]
+          },
+          "title": "Lines",
+          "type": "object"
+        },
+        "mirrored": {
+          "title": "Mirrored",
+          "type": "boolean"
+        },
+        "pipeline": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Pipeline",
+          "type": "object"
+        },
+        "schema_version": {
+          "const": "palm_features.v1",
+          "default": "palm_features.v1",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "hand",
+        "mirrored",
+        "hand_geometry",
+        "lines",
+        "pipeline"
+      ],
+      "title": "PalmFeaturesV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "feature_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Feature Hash"
+    },
+    "features": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PalmFeaturesV1"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "gate": {
+      "$ref": "#/$defs/GateReportV1"
+    },
+    "overlay": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OverlayV1"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "schema_version": {
+      "const": "palm_analysis.v1",
+      "default": "palm_analysis.v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "gate"
+  ],
+  "title": "PalmAnalysisV1",
+  "type": "object"
+}

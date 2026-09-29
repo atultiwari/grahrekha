@@ -46,7 +46,8 @@ _TEMPLATE_UNIT = np.array(
 )
 # Placement in the canvas: 560 px per palm length leaves room for the finger bases
 # above (mounts, heart line) and the wrist creases below.
-_PALM_PX = 560.0
+PALM_UNIT_PX = 560.0  # canonical pixels per palm length (the unit for all features)
+_PALM_PX = PALM_UNIT_PX
 _WRIST_AT = np.array([500.0, 880.0])
 
 

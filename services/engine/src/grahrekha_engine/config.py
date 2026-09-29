@@ -1,5 +1,7 @@
 """Engine settings, read from environment variables prefixed with ENGINE_."""
 
+from pathlib import Path
+
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -9,6 +11,8 @@ class Settings(BaseSettings):
 
     # Shared secret the web API layer sends in X-Engine-Secret.
     shared_secret: str
+    # Downloaded model weights (scripts/fetch-data.sh --only M1,M2).
+    models_dir: Path = Path(__file__).resolve().parents[2] / "models" / "weights"
 
     @field_validator("shared_secret")
     @classmethod

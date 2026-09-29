@@ -17,7 +17,14 @@ class HealthResponse(Contract):
     version: str
 
 
+def _contracts() -> list[tuple[str, type[Contract]]]:
+    from grahrekha_engine.contracts.palm import PalmAnalysisV1
+
+    return [
+        ("health_response.v1", HealthResponse),
+        ("palm_analysis.v1", PalmAnalysisV1),
+    ]
+
+
 # (versioned name, model): names are part of the public contract; never reuse a name.
-CONTRACTS: list[tuple[str, type[Contract]]] = [
-    ("health_response.v1", HealthResponse),
-]
+CONTRACTS: list[tuple[str, type[Contract]]] = _contracts()
