@@ -42,8 +42,17 @@ files = ["src", "tests"]
 module = ["pyarrow", "pyarrow.*"]
 ignore_missing_imports = true
 
+# Linux (CI) gets CPU-only PyTorch wheels instead of multi-GB CUDA builds;
+# macOS keeps the default wheels (with MPS).
 [tool.uv.sources]
 grahrekha-engine = { path = "../services/engine", editable = true }
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+torchvision = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [[tool.mypy.overrides]]
 module = ["cv2", "cv2.*", "scipy", "scipy.*", "skimage", "skimage.*", "segmentation_models_pytorch", "segmentation_models_pytorch.*", "mediapipe", "mediapipe.*", "onnxruntime", "onnxruntime.*"]

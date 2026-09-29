@@ -45,6 +45,25 @@ jobs:
       - run: uv run mypy
       - run: uv run pytest
 
+  ml:
+    name: ML (data + training code)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ml
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+      - name: System libraries MediaPipe needs on Linux (OpenGL ES / EGL)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libgles2 libegl1
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+      - run: uv run pytest -q
+
   typescript:
     name: TypeScript packages
     runs-on: ubuntu-latest
