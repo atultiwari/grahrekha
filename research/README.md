@@ -7,6 +7,7 @@ Research done on 2026-09-29, before designing the architecture.
 | 01 | [Competitor analysis](01-competitor-analysis.md) | How about 25 automated palm-reading products work (tarotbyvela, Nebula, Astroline, Palmist.io, GPTPalm, PANDIT AI…). Five technical levels, from fake to vision-LLM. Monetisation and dark patterns. Privacy law (DPDP, GDPR, BIPA). 17 lessons for our portal. |
 | 02 | [Open-source resources](02-open-source-resources.md) | GitHub projects, datasets (Roboflow, Kaggle, academic), hand-landmark and segmentation tools, classical computer-vision recipe, public-domain palmistry books, astrology libraries, licensing cheat-sheet, recommended starter stack. |
 | 03 | [Academic literature](03-academic-literature.md) | Palmistry automation papers, palm-line segmentation research, evidence-based palm features (2D:4D finger ratio, single palm crease), studies on whether palmistry is valid, the Barnum effect, datasets, how vision-language models handle hands. |
+| 04 | [Jyotish sources](04-jyotish-sources.md) | Public-domain (US + India) English translations of classical Jyotish texts for astrology rules: Brihat Jataka (1885, 1912, 1919), Rao's Jataka Chandrika and Sarvartha Chintamani; why BPHS and Saravali are excluded. (2026-09-30) |
 
 ## Product decisions so far
 
