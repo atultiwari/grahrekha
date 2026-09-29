@@ -256,6 +256,12 @@ datasets:
       - https://universe.roboflow.com/palm-reading-test/palm-line-segmentation
       - https://universe.roboflow.com/leo-ueno/palm-reading-b3tep
     license: mostly CC BY 4.0 (image provenance undocumented)
+    fetched: >-
+      2026-09-30 with the owner's API key via scripts/fetch_roboflow.py (303 MB): per-line
+      polygons from cv2project/palmistry-zbcbn v2 (1083 imgs; heart/head/life),
+      24rd021/palm-reading-itwlw v13 (506; + fate), palm-reading-test/palm-line-segmentation
+      v1 (118), and line keypoints from docseg/palmistry-kp v6 (7112, likely augmented copies).
+      Skipped: bounding-box-only sets, a set with no versions, junk-class and private sets.
   - id: D25
     name: MPD Tongji Mobile Palmprint
     tier: 3
