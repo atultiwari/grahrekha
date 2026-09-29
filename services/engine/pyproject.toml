@@ -6,6 +6,10 @@ license = "Apache-2.0"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "fastapi[standard]>=0.115",
+  "mediapipe>=0.10.20,<0.11",
+  "numpy>=2.0",
+  "opencv-python-headless>=4.10",
+  "pillow>=11.0",
   "pydantic>=2.9",
   "pydantic-settings>=2.6",
 ]
@@ -32,6 +36,8 @@ packages = ["src/grahrekha_engine"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["models: needs downloaded model files (scripts/fetch-data.sh --only M1,M2)"]
 addopts = "--cov=grahrekha_engine --cov-report=term-missing --cov-fail-under=80"
 
 [tool.ruff]
@@ -49,3 +55,7 @@ ignore = ["S101"]  # assert is fine in tests
 strict = true
 files = ["src", "tests"]
 plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["mediapipe", "mediapipe.*", "cv2", "cv2.*"]
+ignore_missing_imports = true
