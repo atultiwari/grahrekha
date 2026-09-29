@@ -2,14 +2,15 @@
 
 # --- Stage 1: download pinned runtime models, verified against data/checksums.sha256.
 # The engine has no internet at runtime (D-016), so everything it needs is baked in here.
-FROM debian:bookworm-slim AS models
+# Python base: fetch-data.sh extracts zip archives with python3.
+FROM python:3.12-slim AS models
 RUN apt-get update \
  && apt-get install -y --no-install-recommends bash curl ca-certificates file \
  && rm -rf /var/lib/apt/lists/*
 WORKDIR /build
 COPY scripts/fetch-data.sh scripts/fetch-data.sh
 COPY data/checksums.sha256 data/checksums.sha256
-RUN bash scripts/fetch-data.sh --only M1,M2,A1
+RUN bash scripts/fetch-data.sh --only M1,M2,A1,A2
 
 # --- Stage 2: runtime.
 FROM python:3.12-slim

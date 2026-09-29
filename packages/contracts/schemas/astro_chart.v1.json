@@ -1,0 +1,283 @@
+{
+  "$defs": {
+    "DashaPeriodV1": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "format": "date",
+          "title": "End",
+          "type": "string"
+        },
+        "lord": {
+          "enum": [
+            "Sun",
+            "Moon",
+            "Mars",
+            "Mercury",
+            "Jupiter",
+            "Venus",
+            "Saturn",
+            "Rahu",
+            "Ketu"
+          ],
+          "title": "Lord",
+          "type": "string"
+        },
+        "start": {
+          "format": "date",
+          "title": "Start",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lord",
+        "start",
+        "end"
+      ],
+      "title": "DashaPeriodV1",
+      "type": "object"
+    },
+    "PlanetPositionV1": {
+      "additionalProperties": false,
+      "properties": {
+        "degree_in_sign": {
+          "title": "Degree In Sign",
+          "type": "number"
+        },
+        "house": {
+          "anyOf": [
+            {
+              "maximum": 12,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "House"
+        },
+        "longitude": {
+          "title": "Longitude",
+          "type": "number"
+        },
+        "nakshatra": {
+          "title": "Nakshatra",
+          "type": "string"
+        },
+        "pada": {
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Pada",
+          "type": "integer"
+        },
+        "planet": {
+          "enum": [
+            "Sun",
+            "Moon",
+            "Mars",
+            "Mercury",
+            "Jupiter",
+            "Venus",
+            "Saturn",
+            "Rahu",
+            "Ketu"
+          ],
+          "title": "Planet",
+          "type": "string"
+        },
+        "retrograde": {
+          "title": "Retrograde",
+          "type": "boolean"
+        },
+        "sign": {
+          "enum": [
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+            "Capricorn",
+            "Aquarius",
+            "Pisces"
+          ],
+          "title": "Sign",
+          "type": "string"
+        }
+      },
+      "required": [
+        "planet",
+        "longitude",
+        "sign",
+        "degree_in_sign",
+        "nakshatra",
+        "pada",
+        "house",
+        "retrograde"
+      ],
+      "title": "PlanetPositionV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "ayanamsa": {
+      "title": "Ayanamsa",
+      "type": "string"
+    },
+    "current_antardasha": {
+      "anyOf": [
+        {
+          "enum": [
+            "Sun",
+            "Moon",
+            "Mars",
+            "Mercury",
+            "Jupiter",
+            "Venus",
+            "Saturn",
+            "Rahu",
+            "Ketu"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Current Antardasha"
+    },
+    "current_mahadasha": {
+      "anyOf": [
+        {
+          "enum": [
+            "Sun",
+            "Moon",
+            "Mars",
+            "Mercury",
+            "Jupiter",
+            "Venus",
+            "Saturn",
+            "Rahu",
+            "Ketu"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Current Mahadasha"
+    },
+    "lagna_degree": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Lagna Degree"
+    },
+    "lagna_sign": {
+      "anyOf": [
+        {
+          "enum": [
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+            "Capricorn",
+            "Aquarius",
+            "Pisces"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Lagna Sign"
+    },
+    "mahadashas": {
+      "items": {
+        "$ref": "#/$defs/DashaPeriodV1"
+      },
+      "title": "Mahadashas",
+      "type": "array"
+    },
+    "moon_nakshatra": {
+      "title": "Moon Nakshatra",
+      "type": "string"
+    },
+    "moon_nakshatra_uncertain": {
+      "title": "Moon Nakshatra Uncertain",
+      "type": "boolean"
+    },
+    "planets": {
+      "items": {
+        "$ref": "#/$defs/PlanetPositionV1"
+      },
+      "title": "Planets",
+      "type": "array"
+    },
+    "provider": {
+      "title": "Provider",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "astro_chart.v1",
+      "default": "astro_chart.v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "time_confidence": {
+      "enum": [
+        "exact",
+        "approximate",
+        "unknown"
+      ],
+      "title": "Time Confidence",
+      "type": "string"
+    },
+    "timezone": {
+      "title": "Timezone",
+      "type": "string"
+    },
+    "utc_offset_hours": {
+      "title": "Utc Offset Hours",
+      "type": "number"
+    }
+  },
+  "required": [
+    "schema_version",
+    "provider",
+    "ayanamsa",
+    "timezone",
+    "utc_offset_hours",
+    "time_confidence",
+    "lagna_sign",
+    "lagna_degree",
+    "planets",
+    "moon_nakshatra",
+    "moon_nakshatra_uncertain",
+    "mahadashas",
+    "current_mahadasha",
+    "current_antardasha"
+  ],
+  "title": "AstroChartV1",
+  "type": "object"
+}

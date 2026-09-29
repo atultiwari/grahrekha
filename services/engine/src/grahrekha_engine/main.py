@@ -3,27 +3,37 @@
 import threading
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
-from datetime import date
+from pathlib import Path
 from typing import Annotated, Literal, Protocol
 
-from fastapi import APIRouter, Depends, FastAPI, File, Form, HTTPException, UploadFile, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    FastAPI,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    UploadFile,
+    status,
+)
 
 from grahrekha_engine import __version__
+from grahrekha_engine.astro.places import PlaceIndex
 from grahrekha_engine.auth import require_shared_secret
 from grahrekha_engine.config import Settings
-from grahrekha_engine.contracts import Contract, HealthResponse
-from grahrekha_engine.contracts.astro import AstroChartV1, BirthDataV1
+from grahrekha_engine.contracts import HealthResponse
+from grahrekha_engine.contracts.astro import (
+    AstroChartV1,
+    AstroRequestV1,
+    PlacesResponseV1,
+    PlaceV1,
+)
 from grahrekha_engine.contracts.palm import PalmAnalysisV1
 from grahrekha_engine.contracts.rules import RulesRequestV1, RulesResponseV1
 from grahrekha_engine.palm.image_io import MAX_UPLOAD_BYTES, InvalidImageError
 from grahrekha_engine.rules.engine import evaluate_rules
 from grahrekha_engine.rules.model import load_rules, rulebase_version
-
-
-class AstroRequestV1(Contract):
-    birth: BirthDataV1
-    # "Current" dasha is computed for this date (explicit, so results are reproducible).
-    reference_date: date
 
 
 class Analyzer(Protocol):
@@ -56,6 +66,31 @@ class _LazyAnalyzer:
         close = getattr(self._instance, "close", None)
         if callable(close):
             close()
+
+
+GEONAMES_ATTRIBUTION = "GeoNames, geonames.org (CC BY 4.0)"
+
+
+class _LazyPlaces:
+    """Loads the GeoNames index (~4 s, ~70k places) on first search."""
+
+    def __init__(self, directory: Path) -> None:
+        self._directory = directory
+        self._index: PlaceIndex | None = None
+        self._lock = threading.Lock()
+
+    def get(self) -> PlaceIndex:
+        with self._lock:
+            if self._index is None:
+                cities = self._directory / "cities5000.txt"
+                admin1 = self._directory / "admin1CodesASCII.txt"
+                if not (cities.exists() and admin1.exists()):
+                    raise HTTPException(
+                        status.HTTP_503_SERVICE_UNAVAILABLE,
+                        detail="place data is not installed (scripts/fetch-data.sh --only A2)",
+                    )
+                self._index = PlaceIndex.load(cities, admin1)
+            return self._index
 
 
 def create_app(
@@ -131,6 +166,20 @@ def create_app(
             return compute_chart(request.birth, ephemeris, request.reference_date)
         except TimezoneError as error:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(error)) from error
+
+    geonames = resolved.models_dir / "A2-geonames"
+    places = _LazyPlaces(geonames)
+
+    @v1.get("/places")
+    def search_places(
+        q: Annotated[str, Query(min_length=1, max_length=100)],
+        limit: Annotated[int, Query(ge=1, le=25)] = 10,
+    ) -> PlacesResponseV1:
+        found = places.get().search(q, limit)
+        return PlacesResponseV1(
+            attribution=GEONAMES_ATTRIBUTION,
+            places=[PlaceV1(**vars(place)) for place in found],
+        )
 
     app.include_router(v1)
     return app

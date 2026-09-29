@@ -1,0 +1,88 @@
+{
+  "$defs": {
+    "BirthDataV1": {
+      "additionalProperties": false,
+      "properties": {
+        "birth_date": {
+          "format": "date",
+          "title": "Birth Date",
+          "type": "string"
+        },
+        "birth_time": {
+          "anyOf": [
+            {
+              "format": "time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Birth Time"
+        },
+        "latitude": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "time_confidence": {
+          "default": "unknown",
+          "enum": [
+            "exact",
+            "approximate",
+            "unknown"
+          ],
+          "title": "Time Confidence",
+          "type": "string"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        }
+      },
+      "required": [
+        "birth_date",
+        "birth_time",
+        "time_confidence",
+        "latitude",
+        "longitude",
+        "timezone"
+      ],
+      "title": "BirthDataV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "birth": {
+      "$ref": "#/$defs/BirthDataV1"
+    },
+    "reference_date": {
+      "format": "date",
+      "title": "Reference Date",
+      "type": "string"
+    }
+  },
+  "required": [
+    "birth",
+    "reference_date"
+  ],
+  "title": "AstroRequestV1",
+  "type": "object"
+}

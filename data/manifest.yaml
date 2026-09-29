@@ -286,6 +286,15 @@ models:
     size_bytes: 16788480
     license: US government work (public domain)
     local: services/engine/models/weights/A1-de421
+  - id: A2
+    name: GeoNames cities5000 + admin1 codes (offline birthplace search)
+    page: https://www.geonames.org/export/
+    download:
+      - https://download.geonames.org/export/dump/cities5000.zip
+      - https://download.geonames.org/export/dump/admin1CodesASCII.txt
+    license: CC BY 4.0 (attribution "GeoNames, geonames.org" required in the UI)
+    note: updated daily upstream, so no pinned checksum; fetch-log.tsv records the sha256 fetched
+    local: services/engine/models/weights/A2-geonames
   - id: M1
     name: MediaPipe hand_landmarker.task
     download: [https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task]

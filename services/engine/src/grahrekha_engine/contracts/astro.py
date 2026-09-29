@@ -76,3 +76,26 @@ class AstroChartV1(Contract):
     mahadashas: list[DashaPeriodV1]
     current_mahadasha: Planet | None = None
     current_antardasha: Planet | None = None
+
+
+class AstroRequestV1(Contract):
+    birth: BirthDataV1
+    # "Current" dasha is computed for this date (explicit, so results are reproducible).
+    reference_date: date
+
+
+class PlaceV1(Contract):
+    geoname_id: int
+    name: str
+    region: str  # state / province; "" when unknown
+    country: str  # ISO 3166-1 alpha-2
+    latitude: float
+    longitude: float
+    timezone: str  # IANA name
+    population: int
+
+
+class PlacesResponseV1(Contract):
+    schema_version: Literal["places_response.v1"] = "places_response.v1"
+    attribution: str  # GeoNames data is CC BY 4.0: show this wherever results are shown
+    places: list[PlaceV1]

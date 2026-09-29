@@ -189,6 +189,16 @@ if [[ "$TIER" -ge 1 ]]; then
     curl_get "$u" "$d/de421.bsp"; record A1 "$d/de421.bsp" "$u"; finish "$d"
   fi
 
+  # GeoNames changes daily, so A2 has no pinned checksum; the log records what was fetched.
+  d="$WEIGHTS/A2-geonames"
+  if item A2 "$d"; then
+    u="https://download.geonames.org/export/dump/cities5000.zip"
+    a="https://download.geonames.org/export/dump/admin1CodesASCII.txt"
+    curl_get "$u" "$d/cities5000.zip"; record A2 "$d/cities5000.zip" "$u"
+    curl_get "$a" "$d/admin1CodesASCII.txt"; record A2 "$d/admin1CodesASCII.txt" "$a"
+    extract "$d/cities5000.zip" "$d"; finish "$d"
+  fi
+
   d="$WEIGHTS/M1-mediapipe"
   if item M1 "$d"; then
     u="https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task"

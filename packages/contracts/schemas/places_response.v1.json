@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "PlaceV1": {
+      "additionalProperties": false,
+      "properties": {
+        "country": {
+          "title": "Country",
+          "type": "string"
+        },
+        "geoname_id": {
+          "title": "Geoname Id",
+          "type": "integer"
+        },
+        "latitude": {
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "title": "Longitude",
+          "type": "number"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "population": {
+          "title": "Population",
+          "type": "integer"
+        },
+        "region": {
+          "title": "Region",
+          "type": "string"
+        },
+        "timezone": {
+          "title": "Timezone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "geoname_id",
+        "name",
+        "region",
+        "country",
+        "latitude",
+        "longitude",
+        "timezone",
+        "population"
+      ],
+      "title": "PlaceV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "attribution": {
+      "title": "Attribution",
+      "type": "string"
+    },
+    "places": {
+      "items": {
+        "$ref": "#/$defs/PlaceV1"
+      },
+      "title": "Places",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "places_response.v1",
+      "default": "places_response.v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "attribution",
+    "places"
+  ],
+  "title": "PlacesResponseV1",
+  "type": "object"
+}

@@ -185,6 +185,12 @@ This comes first so there is something to test against before any engine code ex
 
 **Exit:** D-005 confirmed or switched to the Swiss Ephemeris paid licence. Astro-only template readings work.
 
+**Status (2026-09-30): 3.1–3.5 done; 3.6 waits on the owner's choice of public-domain Jyotish sources.**
+- 3.1: offline birthplace search over GeoNames `cities5000` (~70k places; official, old and Devanagari names; `GET /v1/places`; attribution returned with every response) instead of a Postgres table plus an online geocoder, because the engine has no internet (D-016). Historical offsets via zoneinfo, including pre-1947 Indian ones.
+- 3.2–3.3: `astro/chart.py` (D1, nakshatras, Vimshottari maha/antar dashas for an explicit reference date; unknown birth time withholds lagna and houses). D9 is not exposed yet.
+- 3.4: 30 reference charts against Swiss Ephemeris in `adapters-agpl`: planets ≤ 0.003°, nodes 0.0007° after our Rahu fix, dashas ≤ 1 day. D-005 confirmed. See [docs/eval/astro-validation.md](eval/astro-validation.md).
+- 3.5: `astro_request.v1`, `astro_chart.v1` and `places_response.v1` are generated to TypeScript, and CI runs a chart and a place search inside the isolated engine container.
+
 ---
 
 ## Phase 4: Rules at scale and LLM narration (about 3 weeks)
