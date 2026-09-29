@@ -10,7 +10,7 @@ set -euo pipefail
 MAX_BYTES=$((2 * 1024 * 1024))
 BLOCKED_EXT='\.(jpe?g|png|gif|bmp|tiff?|webp|heic|heif|raw|onnx|pth|pt|ckpt|safetensors|task|tflite|h5|npy|npz|parquet|zip|tar|tgz|gz|rar|7z|db|sqlite3?|mat)$'
 ALLOWED_DIR='(^|/)fixtures/synthetic/'
-ALLOWED_FILES='^(apps/[^/]+/(public|assets)/.*\.(png|svg|ico|webp)|apps/web/app/(favicon\.ico|icon\.png|apple-icon\.png))$'
+ALLOWED_FILES='^(apps/[^/]+/(public|assets)/.*\.(png|svg|ico|webp)|apps/web/src/app/(favicon\.ico|icon\.png|apple-icon\.png))$'
 
 # Portable to macOS bash 3.2 (no mapfile).
 files=()
