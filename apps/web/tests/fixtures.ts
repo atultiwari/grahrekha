@@ -58,12 +58,14 @@ export function chartFixture() {
     time_confidence: "exact",
     lagna_sign: "Leo",
     lagna_degree: 12.5,
+    navamsa_lagna_sign: "Aries",
     planets: [
       {
         planet: "Moon",
         longitude: 100.5,
         sign: "Cancer",
         degree_in_sign: 10.5,
+        navamsa_sign: "Scorpio",
         nakshatra: "Pushya",
         pada: 3,
         house: 12,

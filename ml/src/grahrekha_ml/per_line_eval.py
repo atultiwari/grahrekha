@@ -9,12 +9,14 @@ themselves are human-drawn and complete. Tolerance: 2.5% of palm length (14 cano
 
 import argparse
 import csv
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
 import cv2
 import numpy as np
 from grahrekha_engine.evaluation.line_metrics import tolerant_scores
+from grahrekha_engine.palm.features import zone_of
 from grahrekha_engine.palm.image_io import decode_image
 from grahrekha_engine.palm.pipeline import PalmAnalyzer
 from grahrekha_engine.palm.rectify import CANONICAL_SIZE
@@ -64,9 +66,34 @@ def summarise(tallies: dict[str, list[LineTally]]) -> list[LineSummary]:
     return out
 
 
-def evaluate(data: Path, segmenter: str) -> list[LineSummary]:  # pragma: no cover - data
+def heart_end_zone(points: np.ndarray) -> str | None:
+    """Zone of the heart line's index-side end (smallest canonical x; left-palm layout)."""
+    if len(points) == 0:
+        return None
+    return str(zone_of(points[int(np.argmin(points[:, 0]))]))
+
+
+def zone_agreement(
+    pairs: list[tuple[str, str]],
+) -> tuple[float | None, dict[tuple[str, str], int]]:
+    """Share of (human, predicted) zone pairs that agree, plus counts of each disagreement."""
+    if not pairs:
+        return None, {}
+    agree = sum(human == predicted for human, predicted in pairs)
+    confusions = Counter(pair for pair in pairs if pair[0] != pair[1])
+    return agree / len(pairs), dict(confusions)
+
+
+@dataclass(frozen=True)
+class Evaluation:
+    lines: list[LineSummary]
+    heart_zone_pairs: list[tuple[str, str]]
+
+
+def evaluate(data: Path, segmenter: str) -> Evaluation:  # pragma: no cover - data
     root = data / "processed/lines_v1/eval"
     tallies: dict[str, list[LineTally]] = {name: [] for name in CLASS_NAMES.values()}
+    heart_pairs: list[tuple[str, str]] = []
     analyzer = PalmAnalyzer(WEIGHTS, segmenter)  # type: ignore[arg-type]
     try:
         for row in csv.DictReader(
@@ -88,6 +115,12 @@ def evaluate(data: Path, segmenter: str) -> list[LineSummary]:  # pragma: no cov
                     for segment in trace.segments:
                         cv2.polylines(canvas, [segment.round().astype(np.int32)], False, 255, 1)
                 predicted = canvas > 0
+                if name == "heart" and trace is not None and truth.any():
+                    ys, xs = np.nonzero(truth)
+                    human = heart_end_zone(np.column_stack([xs, ys]).astype(float))
+                    ours = heart_end_zone(np.concatenate(trace.segments))
+                    if human and ours:
+                        heart_pairs.append((human, ours))
                 scores = tolerant_scores(predicted, truth, TOLERANCE_PX)
                 tallies[name].append(
                     LineTally(
@@ -96,7 +129,7 @@ def evaluate(data: Path, segmenter: str) -> list[LineSummary]:  # pragma: no cov
                 )
     finally:
         analyzer.close()
-    return summarise(tallies)
+    return Evaluation(summarise(tallies), heart_pairs)
 
 
 def main() -> None:  # pragma: no cover
@@ -108,9 +141,15 @@ def main() -> None:  # pragma: no cover
     print(f"Segmenter: {args.segmenter}")
     print("| " + " | ".join(header) + " |")
     print("|" + "---|" * len(header))
-    for r in evaluate(args.data, args.segmenter):
+    result = evaluate(args.data, args.segmenter)
+    for r in result.lines:
         cells = [r.line, r.truth_present, r.missed, r.false_alarms, r.recall, r.precision]
         print("| " + " | ".join(str(c) for c in cells) + " |")
+    agreement, confusions = zone_agreement(result.heart_zone_pairs)
+    agreed = len(result.heart_zone_pairs) - sum(confusions.values())
+    print(f"\nHeart end-zone agreement: {agreement:.2f} ({agreed}/{len(result.heart_zone_pairs)})")
+    for (human, predicted), count in sorted(confusions.items(), key=lambda kv: -kv[1]):
+        print(f"- human {human} vs predicted {predicted}: {count}")
 
 
 if __name__ == "__main__":  # pragma: no cover

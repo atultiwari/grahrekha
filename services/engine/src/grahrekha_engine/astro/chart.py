@@ -41,6 +41,12 @@ NOON = time(12, 0)
 J2000_JD = 2451545.0
 
 
+def navamsa_sign(longitude: float) -> Sign:
+    """D9 sign. Consecutive 3deg20' parts run through the zodiac, so each sign's nine start
+    from Aries (fire), Capricorn (earth), Libra (air) or Cancer (water)."""
+    return SIGNS[int((longitude % 360) * 9 // 30) % 12]  # x9 first: exact at boundaries
+
+
 def precession_since_j2000_deg(moment_utc: datetime) -> float:
     """General precession in longitude from J2000 to the given date (IAU 2006, degrees)."""
     julian_day = moment_utc.timestamp() / 86400.0 + 2440587.5
@@ -103,6 +109,7 @@ def _planets(raw: Any, include_houses: bool, moment_utc: datetime) -> list[Plane
                 longitude=round(longitude, 4),
                 sign=sign,
                 degree_in_sign=round(longitude % 30, 4),
+                navamsa_sign=navamsa_sign(longitude),
                 nakshatra=str(nakshatra),
                 pada=int(pada),
                 house=house,
@@ -145,6 +152,7 @@ def compute_chart(birth: BirthDataV1, ephemeris_path: Path, reference_date: date
 
     periods, current_md, current_ad = _dashas(raw, reference_date)
     lagna = raw.d1_chart.houses[0]
+    lagna_longitude = SIGNS.index(lagna.sign) * 30 + float(lagna.sign_degrees)
     return AstroChartV1(
         provider=f"jyotishganit-{version('jyotishganit')}",
         ayanamsa="true-chitrapaksha",
@@ -153,6 +161,7 @@ def compute_chart(birth: BirthDataV1, ephemeris_path: Path, reference_date: date
         time_confidence=birth.time_confidence,
         lagna_sign=cast(Sign, lagna.sign) if known_time else None,
         lagna_degree=round(float(lagna.sign_degrees), 4) if known_time else None,
+        navamsa_lagna_sign=navamsa_sign(lagna_longitude) if known_time else None,
         planets=_planets(raw, include_houses=known_time, moment_utc=moment_utc),
         moon_nakshatra=str(raw.panchanga.nakshatra),
         moon_nakshatra_uncertain=moon_uncertain,

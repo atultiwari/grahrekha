@@ -279,9 +279,8 @@ Defined as a Pydantic model in the engine. JSON Schema is exported to `packages/
   - Current period.
   - An `uncertainty` block. When birth time is approximate or unknown, the Lagna and houses are flagged `unstable` and time-sensitive rules are skipped.
 - **Validation:** the engine's output for 30 reference charts is compared with JHora or PyJHora output. PyJHora is AGPL and runs via `adapters-agpl` only. Tolerances: planet longitude < 0.05°, dasha boundary < 1 day.
-- **Geocoding:**
-  - India: an in-house table of places (GeoNames dump) in SQLite.
-  - Global: a geocoding API behind the API layer.
+- **Geocoding (offline, D-016):**
+  - Places: an in-memory index of GeoNames `cities5000` (~70k places worldwide, CC BY 4.0) inside the engine, served by `GET /v1/places`. It matches official, old (Bombay, Allahabad) and native-script names. Villages under 5,000 people are not covered; the fallback is to pick the nearest town, or later a larger GeoNames extract (`allCountries` for India).
   - Timezone and historical offsets: `timezonefinder` + `zoneinfo`.
 
 The astrology engine never sees palm data, and the palm engine never sees birth data.

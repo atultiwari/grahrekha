@@ -66,6 +66,24 @@
           "title": "Nakshatra",
           "type": "string"
         },
+        "navamsa_sign": {
+          "enum": [
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+            "Capricorn",
+            "Aquarius",
+            "Pisces"
+          ],
+          "title": "Navamsa Sign",
+          "type": "string"
+        },
         "pada": {
           "maximum": 4,
           "minimum": 1,
@@ -115,6 +133,7 @@
         "longitude",
         "sign",
         "degree_in_sign",
+        "navamsa_sign",
         "nakshatra",
         "pada",
         "house",
@@ -227,6 +246,31 @@
       "title": "Moon Nakshatra Uncertain",
       "type": "boolean"
     },
+    "navamsa_lagna_sign": {
+      "anyOf": [
+        {
+          "enum": [
+            "Aries",
+            "Taurus",
+            "Gemini",
+            "Cancer",
+            "Leo",
+            "Virgo",
+            "Libra",
+            "Scorpio",
+            "Sagittarius",
+            "Capricorn",
+            "Aquarius",
+            "Pisces"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Navamsa Lagna Sign"
+    },
     "planets": {
       "items": {
         "$ref": "#/$defs/PlanetPositionV1"
@@ -271,6 +315,7 @@
     "time_confidence",
     "lagna_sign",
     "lagna_degree",
+    "navamsa_lagna_sign",
     "planets",
     "moon_nakshatra",
     "moon_nakshatra_uncertain",

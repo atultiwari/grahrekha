@@ -55,7 +55,7 @@ The index–middle gap centre is at 437. Heart lines **naturally end around the 
 | between index and middle | 61% |
 | under middle | 35% |
 
-**Heart end-zone agreement** between the v0 trace and the human line: **72%** (66/92). The main confusion is human "between" versus v0 "under middle" (18), a mild shortfall rather than wholesale truncation.
+**Heart end-zone agreement** between the v0 trace and the human line: **72%** (66/92). `per_line_eval` prints this (index-side end of the trace vs of the human mask, same `zone_of`). The main confusion is human "between" versus v0 "under middle" (18), a mild shortfall rather than wholesale truncation.
 
 **Target for approving heart end-zone rules:** ≥ 85% agreement.
 

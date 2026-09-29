@@ -47,6 +47,7 @@ class PlanetPositionV1(Contract):
     longitude: float  # sidereal, degrees 0-360
     sign: Sign
     degree_in_sign: float
+    navamsa_sign: Sign  # D9
     nakshatra: str
     pada: int = Field(ge=1, le=4)
     house: int | None = Field(default=None, ge=1, le=12)  # None when birth time is unknown
@@ -69,6 +70,7 @@ class AstroChartV1(Contract):
     # Lagna and houses depend on the exact time: None when the birth time is unknown.
     lagna_sign: Sign | None
     lagna_degree: float | None
+    navamsa_lagna_sign: Sign | None  # D9 ascendant; changes every ~13 minutes of birth time
     planets: list[PlanetPositionV1]
     moon_nakshatra: str
     # True when the Moon's nakshatra could differ depending on the (unknown) time of day.

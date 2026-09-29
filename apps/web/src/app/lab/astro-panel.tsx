@@ -192,6 +192,7 @@ function Chart({ chart }: { chart: AstroChartV1 }) {
       <div className="space-y-2">
         <p>
           Lagna: <strong>{chart.lagna_sign ? `${chart.lagna_sign} ${chart.lagna_degree?.toFixed(2)}°` : "withheld (birth time unknown)"}</strong>
+          {chart.navamsa_lagna_sign && <> · D9 lagna {chart.navamsa_lagna_sign}</>}
         </p>
         <p>
           Moon nakshatra: <strong>{chart.moon_nakshatra}</strong>
@@ -226,6 +227,7 @@ function Chart({ chart }: { chart: AstroChartV1 }) {
             <th>Degree</th>
             <th>Nakshatra</th>
             <th>House</th>
+            <th>D9</th>
           </tr>
         </thead>
         <tbody>
@@ -241,6 +243,7 @@ function Chart({ chart }: { chart: AstroChartV1 }) {
                 {p.nakshatra} {p.pada}
               </td>
               <td>{p.house ?? "–"}</td>
+              <td>{p.navamsa_sign}</td>
             </tr>
           ))}
         </tbody>

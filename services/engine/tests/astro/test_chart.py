@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from grahrekha_engine.astro.chart import compute_chart
+from grahrekha_engine.astro.chart import compute_chart, navamsa_sign
 from grahrekha_engine.contracts.astro import BirthDataV1
 
 pytestmark = pytest.mark.models
@@ -77,6 +77,7 @@ def test_unknown_birth_time_withholds_lagna_and_houses(ephemeris_path: Path) -> 
     chart = compute_chart(birth, ephemeris_path, reference_date=date(2026, 9, 30))
     assert chart.time_confidence == "unknown"
     assert chart.lagna_sign is None and chart.lagna_degree is None
+    assert chart.navamsa_lagna_sign is None
     assert all(p.house is None for p in chart.planets)
     assert isinstance(chart.moon_nakshatra_uncertain, bool)
 
@@ -93,6 +94,30 @@ def test_wartime_india_uses_the_historical_offset(ephemeris_path: Path) -> None:
         compute_chart(birth, ephemeris_path, reference_date=date(2026, 9, 30)).utc_offset_hours
         == 6.5
     )
+
+
+@pytest.mark.parametrize(
+    ("longitude", "expected"),
+    [
+        (0.0, "Aries"),  # Aries (fire) navamsas start from Aries
+        (3.34, "Taurus"),
+        (29.99, "Sagittarius"),
+        (30.0, "Capricorn"),  # Taurus (earth) starts from Capricorn
+        (60.0, "Libra"),  # Gemini (air) starts from Libra
+        (90.0, "Cancer"),  # Cancer (water) starts from Cancer
+        (359.99, "Pisces"),
+    ],
+)
+def test_navamsa_sign(longitude: float, expected: str) -> None:
+    assert navamsa_sign(longitude) == expected
+
+
+def test_navamsa_matches_jyotishganit_for_the_grahas(ephemeris_path: Path) -> None:
+    chart = compute_chart(KARMALA, ephemeris_path, reference_date=date(2026, 9, 30))
+    assert chart.navamsa_lagna_sign == "Aries"  # from jyotishganit's D9 for this chart
+    by_planet = {p.planet: p.navamsa_sign for p in chart.planets}
+    assert by_planet["Venus"] == "Gemini" and by_planet["Mars"] == "Cancer"
+    assert all(p.navamsa_sign in SIGNS for p in chart.planets)
 
 
 def test_birth_data_validation() -> None:
