@@ -24,6 +24,13 @@ from grahrekha_ml.losses import LINE_CLASSES, LineLoss
 CLASS_NAMES = {1: "heart", 2: "head", 3: "life", 4: "fate"}
 
 
+def _plain(value: object) -> object:
+    """Plain Python numbers only, so checkpoints load with torch.load(weights_only=True)."""
+    if isinstance(value, dict):
+        return {k: _plain(v) for k, v in value.items()}
+    return value.item() if isinstance(value, np.generic) else value
+
+
 def build_model(pretrained: bool = True) -> torch.nn.Module:
     model: torch.nn.Module = smp.Unet(
         encoder_name="resnet34", encoder_weights="imagenet" if pretrained else None, classes=5
@@ -130,7 +137,8 @@ def main() -> None:  # pragma: no cover - long-running training
         if dice["mean"] > best:
             best = dice["mean"]
             torch.save(
-                {"model": model.state_dict(), "epoch": epoch, "dice": dice}, run_dir / "best.pt"
+                {"model": model.state_dict(), "epoch": epoch, "dice": _plain(dice)},
+                run_dir / "best.pt",
             )
 
 
