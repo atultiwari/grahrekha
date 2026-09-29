@@ -135,6 +135,8 @@ This comes first so there is something to test against before any engine code ex
   - latency;
   - skin-tone and age slices.
 
+**Status (2026-09-29): Phase 1 prototype complete.** Four criteria met, two missed (line recall 0.843; test–retest 0.77), and the owner review is pending. See [docs/eval/phase1-report.md](eval/phase1-report.md). Recommendation: Phase 2 next.
+
 **Phase 1 exit criteria:**
 
 | Criterion | Target |
