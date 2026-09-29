@@ -16,9 +16,9 @@ from pathlib import Path
 import numpy as np
 import segmentation_models_pytorch as smp
 import torch
-from torch.utils.data import DataLoader, Subset
+from torch.utils.data import DataLoader, Subset, WeightedRandomSampler
 
-from grahrekha_ml.dataset import IGNORE_INDEX, LinesDataset
+from grahrekha_ml.dataset import IGNORE_INDEX, LinesDataset, sample_weights
 from grahrekha_ml.losses import LINE_CLASSES, LineLoss
 
 CLASS_NAMES = {1: "heart", 2: "head", 3: "life", 4: "fate"}
@@ -72,23 +72,31 @@ def main() -> None:  # pragma: no cover - long-running training
     parser.add_argument(
         "--limit", type=int, default=0, help="use only N training images (smoke test)"
     )
+    parser.add_argument("--fate-boost", type=float, default=3.0, help="oversample fate palms")
+    parser.add_argument("--fate-weight", type=float, default=3.0, help="fate class loss weight")
     args = parser.parse_args()
 
     torch.manual_seed(0)
     root = args.data / "processed/lines_v1"
-    train_set = LinesDataset(root / "train", train=True, seed=0)
-    eval_set = LinesDataset(root / "eval", train=False)
+    full_train = LinesDataset(root / "train", train=True, seed=0)
+    weights = sample_weights(full_train, args.fate_boost)
+    train_set: LinesDataset | Subset[tuple[torch.Tensor, torch.Tensor]] = full_train
+    eval_set: LinesDataset | Subset[tuple[torch.Tensor, torch.Tensor]] = LinesDataset(
+        root / "eval", train=False
+    )
     if args.limit:
-        train_set = Subset(train_set, range(args.limit))  # type: ignore[assignment]
-        eval_set = Subset(eval_set, range(min(args.limit, len(eval_set))))  # type: ignore[assignment]
+        train_set = Subset(full_train, range(args.limit))
+        weights = weights[: args.limit]
+        eval_set = Subset(eval_set, range(min(args.limit, len(eval_set))))
+    sampler = WeightedRandomSampler(weights, num_samples=len(weights), replacement=True)
     train_loader = DataLoader(
-        train_set, batch_size=args.batch, shuffle=True, num_workers=2, persistent_workers=True
+        train_set, batch_size=args.batch, sampler=sampler, num_workers=2, persistent_workers=True
     )
     eval_loader = DataLoader(eval_set, batch_size=args.batch, num_workers=2)
 
     dev = device()
     model = build_model().to(dev)
-    loss_fn = LineLoss().to(dev)
+    loss_fn = LineLoss(class_weights=(0.2, 1.0, 1.0, 1.0, args.fate_weight)).to(dev)
     optimiser = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     schedule = torch.optim.lr_scheduler.OneCycleLR(
         optimiser, max_lr=args.lr, total_steps=args.epochs * len(train_loader), pct_start=0.1

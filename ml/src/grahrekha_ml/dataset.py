@@ -76,3 +76,12 @@ class LinesDataset(Dataset[tuple[torch.Tensor, torch.Tensor]]):
         return torch.from_numpy(x.transpose(2, 0, 1).copy()), torch.from_numpy(
             label.astype(np.int64)
         )
+
+
+def sample_weights(dataset: LinesDataset, fate_boost: float = 3.0) -> list[float]:
+    """Per-image sampling weights: palms with a fate line are drawn `fate_boost`x as often.
+
+    The fate line appears in only ~22% of training palms; without this the model can
+    learn to never predict it (the first v1 run had fate Dice 0 for 6 epochs).
+    """
+    return [fate_boost if int(row.get("fate") or 0) > 0 else 1.0 for row in dataset.rows]

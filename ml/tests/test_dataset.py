@@ -38,3 +38,15 @@ def test_dataset_reads_index_and_returns_tensors(tmp_path: Path) -> None:
     item = LinesDataset(tmp_path, train=False)[0]
     assert item[0].shape == (3, 32, 32) and item[1].shape == (32, 32)
     assert int(item[1].max()) == 3
+
+
+def test_sample_weights_boost_palms_with_a_fate_line(tmp_path: Path) -> None:
+    from grahrekha_ml.dataset import sample_weights
+
+    (tmp_path / "index.tsv").write_text(
+        "image\tlabel\tsource\theart\thead\tlife\tfate\tignore\n"
+        "a.png\ta_label.png\tx\t10\t10\t10\t0\t0\n"
+        "b.png\tb_label.png\tx\t10\t10\t10\t25\t0\n"
+    )
+    weights = sample_weights(LinesDataset(tmp_path, train=False), fate_boost=3.0)
+    assert weights == [1.0, 3.0]
