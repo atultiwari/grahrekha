@@ -39,7 +39,7 @@ jobs:
       - run: uv sync --locked
       - name: Fetch MediaPipe model + example palm (pinned, checksum-verified)
         working-directory: .
-        run: bash scripts/fetch-data.sh --only M1,M2
+        run: bash scripts/fetch-data.sh --only M1,M2,B1
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run mypy

@@ -9,6 +9,9 @@ services:
     build: ./services/engine
     environment:
       ENGINE_SHARED_SECRET: ${ENGINE_SHARED_SECRET:-local-dev-secret}
+      ENGINE_RULES_DIR: /app/rules
+    volumes:
+      - ./rules:/app/rules:ro
     ports: ["127.0.0.1:8000:8000"]
 
   web:

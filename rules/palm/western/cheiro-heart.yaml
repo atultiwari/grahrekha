@@ -1,0 +1,124 @@
+# Heart line rules from Cheiro, "Palmistry for All" (1916), Chapter VII.
+# Public domain; Project Gutenberg #20480. Rule text: CC BY 4.0 (LICENSE-CONTENT).
+#
+# Orientation: Cheiro says the heart line "rises" under the index finger (Mount of
+# Jupiter) or middle finger (Mount of Saturn) and runs to the edge of the palm. In our
+# features that index/middle-side end is lines.heart.end_zone (our lines start at the
+# percussion). Zones: under_index = Mount of Jupiter; under_middle = Mount of Saturn.
+# Cheiro's "between the first and second fingers" is our zone boundary and is therefore
+# never certain; it is not used.
+# Length thresholds are percentiles of 135 measured palms (positives_v1):
+# p20 = 0.555, p90 = 0.742 palm lengths.
+
+- id: palm.heart.rises_on_jupiter
+  tradition: western
+  engine: palm
+  domain: love_relationships
+  when:
+    and:
+      - "==": [{var: lines.heart.end_zone}, under_index]
+      - "==": [{var: lines.heart.end_zone_certain}, true]
+  statement:
+    en: >-
+      Your heart line reaches toward the mount beneath your index finger. Cheiro read
+      this as idealism in love: high standards, loyalty, and admiration for the people
+      you care about.
+  polarity: positive
+  strength: 2
+  excludes: [palm.heart.rises_on_saturn]
+  source:
+    work: "Cheiro, Palmistry for All (1916)"
+    locator: "Chapter VII, The Line of Heart"
+    edition: "Project Gutenberg #20480"
+    quote: >-
+      "People with such a Heart Line are firm and reliable in their affections, they
+      have an unusually high code of honour and morality."
+  mapping_note: >-
+    Cheiro distinguishes the centre and the outer edge of the Mount of Jupiter; we
+    cannot yet, so this uses the more moderate "centre" reading.
+  validity_blocker: >-
+    The v0 segmenter often stops the heart line short of its index-finger end (114/135
+    palms end under the middle finger; docs/eval/features-v1.md), so this zone is
+    biased. Re-validate with the Phase 2 segmenter before approval.
+  review: {status: extracted}
+
+- id: palm.heart.rises_on_saturn
+  tradition: western
+  engine: palm
+  domain: love_relationships
+  when:
+    and:
+      - "==": [{var: lines.heart.end_zone}, under_middle]
+      - "==": [{var: lines.heart.end_zone_certain}, true]
+  statement:
+    en: >-
+      Your heart line reaches toward the mount beneath your middle finger. Cheiro read
+      this as a reserved, undemonstrative way of loving: steady and determined to win
+      the person you want, but slow to show tenderness openly.
+  polarity: caution
+  strength: 2
+  source:
+    work: "Cheiro, Palmistry for All (1916)"
+    locator: "Chapter VII, The Line of Heart"
+    edition: "Project Gutenberg #20480"
+    quote: >-
+      "They are inclined to be cynical, reserved, undemonstrative but very insistent in
+      trying to gain the person they want."
+  mapping_note: >-
+    Cheiro's wording is harsh ("rather selfish"); the statement keeps his meaning but
+    not his judgemental tone.
+  validity_blocker: >-
+    Fires for most palms because the v0 segmenter truncates the heart line before it
+    reaches the index finger (docs/eval/features-v1.md). Must not be shown until the
+    heart-line end is measured correctly.
+  review: {status: extracted}
+
+- id: palm.heart.short
+  tradition: western
+  engine: palm
+  domain: love_relationships
+  when:
+    and:
+      - "==": [{var: lines.heart.present}, true]
+      - "<": [{var: lines.heart.length}, 0.555]
+  statement:
+    en: >-
+      Your heart line is on the short side. In Cheiro's reading, feelings are expressed
+      in quieter, less effusive ways rather than through grand gestures.
+  polarity: neutral
+  strength: 1
+  excludes: [palm.heart.very_long]
+  source:
+    work: "Cheiro, Palmistry for All (1916)"
+    locator: "Chapter VII, The Line of Heart"
+    edition: "Project Gutenberg #20480"
+    quote: >-
+      "The shorter the Line of Heart is on the Hand, the less the higher sentiments of
+      the affection make themselves manifest."
+  validity_blocker: >-
+    Length is partly an artefact of v0 heart-line truncation; re-validate with the
+    Phase 2 segmenter.
+  review: {status: extracted}
+
+- id: palm.heart.very_long
+  tradition: western
+  engine: palm
+  domain: love_relationships
+  when:
+    and:
+      - "==": [{var: lines.heart.present}, true]
+      - ">": [{var: lines.heart.length}, 0.742]
+  statement:
+    en: >-
+      Your heart line is unusually long. Cheiro linked this with intense attachment,
+      and cautioned that such intensity can tip into jealousy.
+  polarity: caution
+  strength: 1
+  source:
+    work: "Cheiro, Palmistry for All (1916)"
+    locator: "Chapter VII, The Line of Heart"
+    edition: "Project Gutenberg #20480"
+    quote: >-
+      "When the Line of Heart is found in excess, namely, extremely long--it denotes a
+      terrible tendency toward jealousy"
+  review: {status: extracted}

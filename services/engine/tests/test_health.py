@@ -24,3 +24,11 @@ def test_app_fails_fast_without_secret(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("ENGINE_SHARED_SECRET", raising=False)
     with pytest.raises(ValueError):
         create_app()
+
+
+def test_rules_dir_default_is_safe_outside_a_checkout(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Inside the container the package lives at /app/src/..., only 4 levels deep.
+    import grahrekha_engine.config as config
+
+    monkeypatch.setattr(config, "__file__", "/app/src/grahrekha_engine/config.py")
+    assert config._repo_rules_dir().as_posix() == "rules"

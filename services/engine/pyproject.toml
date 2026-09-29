@@ -13,6 +13,7 @@ dependencies = [
   "pillow>=11.0",
   "pydantic>=2.9",
   "pydantic-settings>=2.6",
+  "pyyaml>=6.0",
   "scikit-image>=0.24",
 ]
 
@@ -27,6 +28,7 @@ dev = [
   "httpx>=0.28",
   "ruff>=0.8",
   "mypy>=1.13",
+  "types-pyyaml>=6.0",
 ]
 
 [build-system]

@@ -270,6 +270,14 @@ datasets:
     login: true   # application form + email
     license: research only, commercial prohibited
 
+texts:
+  - id: B1
+    name: Cheiro, Palmistry for All (1916)
+    page: https://www.gutenberg.org/ebooks/20480
+    download: [https://www.gutenberg.org/cache/epub/20480/pg20480.txt]
+    license: public domain (Project Gutenberg)
+    local: data/raw/B1-cheiro-palmistry-for-all
+
 models:
   - id: M1
     name: MediaPipe hand_landmarker.task

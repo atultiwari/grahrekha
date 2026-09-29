@@ -171,6 +171,12 @@ if [[ "$TIER" -ge 1 ]]; then
     extract "$d/hof.zip" "$d/hof"; extract "$d/eyth.zip" "$d/eyth"; finish "$d"
   fi
 
+  d="$RAW/B1-cheiro-palmistry-for-all"
+  if item B1 "$d"; then
+    u="https://www.gutenberg.org/cache/epub/20480/pg20480.txt"
+    curl_get "$u" "$d/pg20480.txt"; record B1 "$d/pg20480.txt" "$u"; finish "$d"
+  fi
+
   # ---- models
   d="$WEIGHTS/M1-mediapipe"
   if item M1 "$d"; then

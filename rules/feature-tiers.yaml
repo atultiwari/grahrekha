@@ -1,0 +1,35 @@
+# Feature reliability tiers (D-015), from test-retest on retest_v1.
+# Evidence: docs/eval/features-v1.md. Unlisted features are experimental.
+# Approved rules may only use reliable or moderate features; the lint enforces this.
+reliable:
+  - lines.heart.present
+  - lines.head.present
+  - lines.life.present
+  - lines.life.start_zone
+  - lines.life.start_zone_certain
+  - lines.heart.end_zone
+  - lines.heart.end_zone_certain
+  - lines.heart.length          # within/between reliability 0.74
+moderate:
+  - lines.heart.start_zone
+  - lines.heart.start_zone_certain
+  - lines.head.start_zone
+  - lines.head.start_zone_certain
+  - lines.head.end_zone
+  - lines.head.end_zone_certain
+  - lines.fate.end_zone
+  - lines.fate.end_zone_certain
+  - lines.heart.slope_deg       # 0.70
+  - lines.heart.curvature       # 0.66
+  - lines.head.slope_deg        # 0.65
+  - lines.life.curvature        # 0.75
+experimental:
+  - head_life_joined            # 0.72
+  - hand_geometry.element       # 0.72
+  - hand_geometry.finger_length # 0.68
+  - hand_geometry.palm_shape    # 0.57
+  - hand_geometry.index_vs_ring # 0.62
+  - lines.fate.present          # 0.68
+  - lines.head.length           # 0.60
+  - lines.life.length           # 0.42
+  - lines.life.sweep            # 0.55

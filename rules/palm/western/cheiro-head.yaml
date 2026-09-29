@@ -1,0 +1,132 @@
+# Head line rules from Cheiro, "Palmistry for All" (1916), Chapter II.
+# Public domain; Project Gutenberg #20480. Rule text: CC BY 4.0 (LICENSE-CONTENT).
+#
+# Zones: hypothenar = Mount of the Moon ("Mount of Imagination" in Cheiro).
+# Slope is the chord angle in our canonical left-palm frame (y up); head lines slope
+# downward, so values are negative. Percentiles of 137 measured palms (positives_v1):
+# p10 = -43.5 deg (steepest), p80 = -34.8 deg (straightest).
+# Life-line rules: none. Cheiro's life-line chapter is about health, constitution and
+# length of life, which GrahRekha never claims (D-009).
+
+- id: palm.head.gentle_slope_to_moon
+  tradition: western
+  engine: palm
+  domain: mind_learning
+  when:
+    and:
+      - "==": [{var: lines.head.end_zone}, hypothenar]
+      - "==": [{var: lines.head.end_zone_certain}, true]
+      - ">=": [{var: lines.head.slope_deg}, -43.5]
+  statement:
+    en: >-
+      Your head line curves gently toward the lower outer palm, the area traditionally
+      called the Mount of the Moon. Cheiro saw this as a good imagination that you
+      stay in control of: you use it when you choose to.
+  polarity: positive
+  strength: 2
+  excludes: [palm.head.steep_to_moon, palm.head.straight_across]
+  source:
+    work: "Cheiro, Palmistry for All (1916)"
+    locator: "Chapter II, The Line of Head joined to the Line of Life"
+    edition: "Project Gutenberg #20480"
+    quote: >-
+      "When the sloping Line of Head has a gentle curve downwards towards the Mount of
+      the Moon, distinct control over the imagination is indicated."
+  review: {status: extracted}
+
+- id: palm.head.steep_to_moon
+  tradition: western
+  engine: palm
+  domain: mind_learning
+  when:
+    and:
+      - "==": [{var: lines.head.end_zone}, hypothenar]
+      - "==": [{var: lines.head.end_zone_certain}, true]
+      - "<": [{var: lines.head.slope_deg}, -43.5]
+  statement:
+    en: >-
+      Your head line bends steeply toward the Mount of the Moon. Cheiro associated this
+      with a very strong imagination that can take the lead, so work may flow best when
+      the mood is right.
+  polarity: caution
+  strength: 2
+  source:
+    work: "Cheiro, Palmistry for All (1916)"
+    locator: "Chapter II, The Line of Head joined to the Line of Life"
+    edition: "Project Gutenberg #20480"
+    quote: >-
+      "But the contrary is the case when the line bends too far down this Mount. In this
+      case the subject is the slave of his imagination"
+  mapping_note: "Steep = steeper than the 10th percentile of measured head lines."
+  review: {status: extracted}
+
+- id: palm.head.straight_across
+  tradition: western
+  engine: palm
+  domain: mind_learning
+  when:
+    and:
+      - "==": [{var: lines.head.present}, true]
+      - ">": [{var: lines.head.slope_deg}, -34.8]
+  statement:
+    en: >-
+      Your head line runs comparatively straight across the palm. Cheiro read a
+      straighter head line as a practical, determined mind that follows through on its
+      decisions.
+  polarity: positive
+  strength: 1
+  source:
+    work: "Cheiro, Palmistry for All (1916)"
+    locator: "Chapter II, The Line of Head joined to the Line of Life"
+    edition: "Project Gutenberg #20480"
+    quote: >-
+      "The straighter the Head Line is found, the subject can be more relied on to carry
+      out his determination"
+  mapping_note: "Straighter = flatter than the 80th percentile of measured head lines."
+  review: {status: extracted}
+
+- id: palm.head.joined_to_life
+  tradition: western
+  engine: palm
+  domain: personality_temperament
+  when:
+    "==": [{var: head_life_joined}, true]
+  statement:
+    en: >-
+      Your head line begins joined to your life line. Cheiro read this as a sensitive,
+      cautious temperament, often with more ability than you give yourself credit for.
+  polarity: neutral
+  strength: 2
+  excludes: [palm.head.separate_from_life]
+  source:
+    work: "Cheiro, Palmistry for All (1916)"
+    locator: "Chapter II, The Line of Head joined to the Line of Life"
+    edition: "Project Gutenberg #20480"
+    quote: >-
+      "The position of this line indicates in all cases a highly sensitive disposition,
+      which inclines towards the side of caution and also lacks self-confidence"
+  review: {status: extracted, notes: "Uses an experimental feature (D-015); research arm only."}
+
+- id: palm.head.separate_from_life
+  tradition: western
+  engine: palm
+  domain: personality_temperament
+  when:
+    "==": [{var: head_life_joined}, false]
+  statement:
+    en: >-
+      Your head line starts apart from your life line. Cheiro read this as independent
+      thinking, quick judgement and a certain mental daring.
+  polarity: positive
+  strength: 2
+  source:
+    work: "Cheiro, Palmistry for All (1916)"
+    locator: "Chapter II, The Line of Head separated from the Line of Life"
+    edition: "Project Gutenberg #20480"
+    quote: >-
+      "it is an excellent mark to have, giving independence of thought, quickness of
+      judgment, and a certain mental daring"
+  mapping_note: >-
+    Cheiro distinguishes a small gap from a very wide one; we only measure joined vs
+    not joined.
+  review: {status: extracted, notes: "Uses an experimental feature (D-015); research arm only."}

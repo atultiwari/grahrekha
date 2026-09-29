@@ -54,10 +54,22 @@ CATEGORICAL: dict[str, Callable[[PalmFeaturesV1], object]] = {
     "element": lambda f: f.hand_geometry.element,
     "index_vs_ring": lambda f: f.hand_geometry.index_vs_ring,
 }
+
+
+def _measure(line: str, attr: str) -> Callable[[PalmFeaturesV1], float | None]:
+    def get(f: PalmFeaturesV1) -> float | None:
+        feature = f.lines[line]  # type: ignore[index]
+        value = getattr(feature, attr)
+        return float(value) if feature.present and value is not None else None
+
+    return get
+
+
 CONTINUOUS: dict[str, Callable[[PalmFeaturesV1], float | None]] = {
-    f"{n}.length": (lambda f, n=n: f.lines[n].length if f.lines[n].present else None)  # type: ignore[misc]
-    for n in ("heart", "head", "life")
-}
+    f"{line}.{attr}": _measure(line, attr)
+    for line in ("heart", "head", "life")
+    for attr in ("length", "curvature", "slope_deg")
+} | {"life.sweep": _measure("life", "sweep")}
 
 
 def pair_agreement(values: list[object]) -> float:
@@ -87,14 +99,23 @@ def report(groups: dict[str, list[PalmFeaturesV1]], latencies: list[float], reje
         f"Zone coverage (endpoints with a certain zone): {zone_coverage(usable):.2f}",
         "",
     ]
-    lines += ["| Length | Mean within-group coefficient of variation |", "|---|---|"]
+    lines += [
+        "| Measure | Within-hand SD | Between-hand SD | Reliability (1 - within/between) |",
+        "|---|---|---|---|",
+    ]
     for name, get in CONTINUOUS.items():
-        cvs = []
+        within, means = [], []
         for fs in usable.values():
             vals = [v for f in fs if (v := get(f)) is not None]
-            if len(vals) >= 2 and np.mean(vals) > 0:
-                cvs.append(float(np.std(vals) / np.mean(vals)))
-        lines.append(f"| {name} | {np.mean(cvs):.2f} |" if cvs else f"| {name} | n/a |")
+            if len(vals) >= 2:
+                within.append(float(np.std(vals, ddof=1)))
+                means.append(float(np.mean(vals)))
+        if len(means) >= 3:
+            w, b = float(np.mean(within)), float(np.std(means, ddof=1))
+            rel = 1 - w / b if b > 0 else float("nan")
+            lines.append(f"| {name} | {w:.3f} | {b:.3f} | {rel:.2f} |")
+        else:
+            lines.append(f"| {name} | n/a | n/a | n/a |")
     if latencies:
         lines += [
             "",
