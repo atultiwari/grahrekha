@@ -5,12 +5,12 @@
   "dependencies": {
     "expo": "~57.0.26",
     "expo-status-bar": "~57.0.1",
-    "react": "19.2.3",
-    "react-native": "0.86.3",
+    "react": "19.3.0",
+    "react-native": "0.87.1",
     "@grahrekha/contracts": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "~19.2.2",
+    "@types/react": "~19.3.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
