@@ -147,7 +147,8 @@ def main() -> None:  # pragma: no cover
         print("| " + " | ".join(str(c) for c in cells) + " |")
     agreement, confusions = zone_agreement(result.heart_zone_pairs)
     agreed = len(result.heart_zone_pairs) - sum(confusions.values())
-    print(f"\nHeart end-zone agreement: {agreement:.2f} ({agreed}/{len(result.heart_zone_pairs)})")
+    shown = "n/a" if agreement is None else f"{agreement:.2f}"
+    print(f"\nHeart end-zone agreement: {shown} ({agreed}/{len(result.heart_zone_pairs)})")
     for (human, predicted), count in sorted(confusions.items(), key=lambda kv: -kv[1]):
         print(f"- human {human} vs predicted {predicted}: {count}")
 

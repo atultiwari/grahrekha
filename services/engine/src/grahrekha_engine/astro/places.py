@@ -38,9 +38,28 @@ def fold(text: str) -> str:
     return unicodedata.normalize("NFC", "".join(out)).strip()
 
 
+def _parse_place(row: list[str], regions: dict[str, str]) -> Place | None:
+    try:
+        return Place(
+            geoname_id=int(row[0]),
+            name=row[1],
+            region=regions.get(f"{row[8]}.{row[10]}", ""),
+            country=row[8],
+            latitude=float(row[4]),
+            longitude=float(row[5]),
+            timezone=row[17],
+            population=int(row[14] or 0),
+        )
+    except ValueError:
+        return None
+
+
 class PlaceIndex:
-    def __init__(self, places: list[Place], keys: list[tuple[str, int, int]]) -> None:
+    def __init__(
+        self, places: list[Place], keys: list[tuple[str, int, int]], skipped: int = 0
+    ) -> None:
         self._places = places
+        self.skipped = skipped  # unparseable rows ignored at load time
         self._keys = sorted(keys)
         self._words = [k[0] for k in self._keys]
 
@@ -53,28 +72,22 @@ class PlaceIndex:
                     regions[row[0]] = row[1]
         places: list[Place] = []
         keys: list[tuple[str, int, int]] = []
+        skipped = 0
         with cities.open(encoding="utf-8", newline="") as f:
             for row in csv.reader(f, delimiter="\t", quoting=csv.QUOTE_NONE):
                 if len(row) < 18:
                     continue
+                place = _parse_place(row, regions)
+                if place is None:
+                    skipped += 1
+                    continue
                 index = len(places)
-                places.append(
-                    Place(
-                        geoname_id=int(row[0]),
-                        name=row[1],
-                        region=regions.get(f"{row[8]}.{row[10]}", ""),
-                        country=row[8],
-                        latitude=float(row[4]),
-                        longitude=float(row[5]),
-                        timezone=row[17],
-                        population=int(row[14] or 0),
-                    )
-                )
+                places.append(place)
                 official = {fold(row[1]), fold(row[2])} - {""}
                 alternate = {fold(n) for n in row[3].split(",")} - official - {""}
                 keys.extend((name, OFFICIAL, index) for name in official)
                 keys.extend((name, ALTERNATE, index) for name in alternate)
-        return cls(places, keys)
+        return cls(places, keys, skipped)
 
     def search(self, query: str, limit: int = 10) -> list[Place]:
         prefix = fold(query)

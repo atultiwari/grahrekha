@@ -44,7 +44,7 @@ J2000_JD = 2451545.0
 def navamsa_sign(longitude: float) -> Sign:
     """D9 sign. Consecutive 3deg20' parts run through the zodiac, so each sign's nine start
     from Aries (fire), Capricorn (earth), Libra (air) or Cancer (water)."""
-    return SIGNS[int((longitude % 360) * 9 // 30) % 12]  # x9 first: exact at boundaries
+    return SIGNS[int((longitude % 360) * 9 // 30) % 12]  # x9 first: exact at sign boundaries
 
 
 def precession_since_j2000_deg(moment_utc: datetime) -> float:

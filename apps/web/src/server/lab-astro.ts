@@ -2,6 +2,7 @@ import type { AstroChartV1, BirthDataV1, PlacesResponseV1 } from "@grahrekha/con
 import { z } from "zod";
 import { EngineError, type EngineClient } from "./engine-client";
 
+const MIN_QUERY_LENGTH = 2; // one character matches a large share of all place names
 const MAX_QUERY_LENGTH = 100;
 const PLACE_RESULTS = 8;
 
@@ -17,7 +18,7 @@ const BirthFormSchema = z
     birth_date: z.string().date("Enter a valid birth date."),
     birth_time: z
       .string()
-      .regex(/^(\d{2}:\d{2}(:\d{2})?)?$/, "Enter the time as HH:MM.")
+      .regex(/^(([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?)?$/, "Enter the time as HH:MM (24-hour).")
       .default(""),
     time_confidence: z.enum(["exact", "approximate", "unknown"]),
     latitude: z.number().gte(-90).lte(90),
@@ -40,11 +41,19 @@ function toBirthData(form: z.infer<typeof BirthFormSchema>): BirthDataV1 {
   };
 }
 
+const UNAVAILABLE = "The astrology service is unavailable. Try again.";
+
 function engineFailure(error: unknown): { status: number; body: { error: string } } {
   if (!(error instanceof EngineError)) throw error;
   console.error("[lab] engine error:", error.message);
-  const status = error.status >= 400 && error.status < 500 ? error.status : 503;
-  return { status, body: { error: error.userMessage ?? "The astrology service is unavailable. Try again." } };
+  // 401/403 mean our own shared secret is wrong: an operator problem, not the user's.
+  if (error.status === 401 || error.status === 403 || error.status >= 500) {
+    return { status: 503, body: { error: UNAVAILABLE } };
+  }
+  if (error.status === 422) {
+    return { status: 400, body: { error: "Check the birth details and try again." } };
+  }
+  return { status: error.status, body: { error: error.userMessage ?? UNAVAILABLE } };
 }
 
 export async function handleLabPlaces(
@@ -52,8 +61,8 @@ export async function handleLabPlaces(
   engine: LabAstroEngine,
 ): Promise<LabAstroResult<PlacesResponseV1>> {
   const q = (query ?? "").trim();
-  if (q.length === 0 || q.length > MAX_QUERY_LENGTH) {
-    return { status: 400, body: { error: "Type 1-100 characters of a place name." } };
+  if (q.length < MIN_QUERY_LENGTH || q.length > MAX_QUERY_LENGTH) {
+    return { status: 400, body: { error: "Type 2-100 characters of a place name." } };
   }
   try {
     return { status: 200, body: await engine.searchPlaces(q, PLACE_RESULTS) };

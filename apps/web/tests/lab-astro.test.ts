@@ -19,7 +19,7 @@ describe("lab place search", () => {
     expect(e.searchPlaces).toHaveBeenCalledWith("banaras", 8);
   });
 
-  it.each([[null], [""], ["   "], ["x".repeat(101)]])("rejects query %j without calling the engine", async (q) => {
+  it.each([[null], [""], ["   "], ["d"], ["x".repeat(101)]])("rejects query %j without calling the engine", async (q) => {
     const e = engine();
     expect((await handleLabPlaces(q, e)).status).toBe(400);
     expect(e.searchPlaces).not.toHaveBeenCalled();
@@ -34,6 +34,18 @@ describe("lab place search", () => {
 });
 
 describe("lab chart", () => {
+  it.each([
+    [401, 503, "unavailable"],
+    [403, 503, "unavailable"],
+    [422, 400, "Check the birth details"],
+  ])("maps engine %i to %i without leaking engine details", async (engineStatus, status, message) => {
+    const e = engine();
+    e.astroChart.mockRejectedValue(new EngineError("x", engineStatus, "engine secret mismatch"));
+    const result = await handleLabChart(BIRTH, e, TODAY);
+    expect(result.status).toBe(status);
+    expect(result.body).toEqual({ error: expect.stringContaining(message) });
+  });
+
   it("normalises HH:MM to HH:MM:SS and uses today's date as the reference", async () => {
     const e = engine();
     const result = await handleLabChart(BIRTH, e, TODAY);
@@ -59,6 +71,7 @@ describe("lab chart", () => {
     ["time without confidence", { ...BIRTH, time_confidence: "unknown" }],
     ["confidence without time", { ...BIRTH, birth_time: "" }],
     ["not an object", "hello"],
+    ["impossible time", { ...BIRTH, birth_time: "99:99" }],
   ])("rejects %s with 400", async (_label, body) => {
     const e = engine();
     const result = await handleLabChart(body, e, TODAY);

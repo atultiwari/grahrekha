@@ -1,5 +1,6 @@
 """FastAPI application factory."""
 
+import logging
 import threading
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
@@ -68,6 +69,7 @@ class _LazyAnalyzer:
             close()
 
 
+logger = logging.getLogger(__name__)
 GEONAMES_ATTRIBUTION = "GeoNames, geonames.org (CC BY 4.0)"
 
 
@@ -90,6 +92,8 @@ class _LazyPlaces:
                         detail="place data is not installed (scripts/fetch-data.sh --only A2)",
                     )
                 self._index = PlaceIndex.load(cities, admin1)
+                if self._index.skipped:
+                    logger.warning("GeoNames: skipped %d malformed rows", self._index.skipped)
             return self._index
 
 
@@ -172,7 +176,7 @@ def create_app(
 
     @v1.get("/places")
     def search_places(
-        q: Annotated[str, Query(min_length=1, max_length=100)],
+        q: Annotated[str, Query(min_length=2, max_length=100)],  # 1 char scans ~20% of names
         limit: Annotated[int, Query(ge=1, le=25)] = 10,
     ) -> PlacesResponseV1:
         found = places.get().search(q, limit)

@@ -41,12 +41,14 @@ def test_search_returns_places(tmp_path: Path) -> None:
 
 def test_limit_is_bounded(tmp_path: Path) -> None:
     client = _client(_models_with_places(tmp_path))
-    ok = client.get("/v1/places", headers=HEADERS, params={"q": "d", "limit": 1})
+    ok = client.get("/v1/places", headers=HEADERS, params={"q": "de", "limit": 1})
     assert len(ok.json()["places"]) == 1
     assert (
-        client.get("/v1/places", headers=HEADERS, params={"q": "d", "limit": 99}).status_code == 422
+        client.get("/v1/places", headers=HEADERS, params={"q": "de", "limit": 99}).status_code
+        == 422
     )
-    assert client.get("/v1/places", headers=HEADERS, params={"q": ""}).status_code == 422
+    # One character matches a large share of ~500k names (slow); require two.
+    assert client.get("/v1/places", headers=HEADERS, params={"q": "d"}).status_code == 422
     assert client.get("/v1/places", headers=HEADERS, params={"q": "x" * 101}).status_code == 422
 
 

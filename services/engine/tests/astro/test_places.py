@@ -42,6 +42,15 @@ def test_search_is_case_and_accent_insensitive(places: PlaceIndex) -> None:
 
 
 def test_limits_and_empty_queries(places: PlaceIndex) -> None:
-    assert len(places.search("d", limit=1)) == 1
+    assert len(places.search("de", limit=1)) == 1
     assert places.search("  ") == []
     assert places.search("zzzz") == []
+
+
+def test_malformed_rows_are_skipped(tmp_path: Path) -> None:
+    cities = tmp_path / "cities.tsv"
+    good = (FIXTURES / "cities.tsv").read_text(encoding="utf-8")
+    cities.write_text("not-a-number\tBroken\n" + "x\t" * 18 + "\n" + good, encoding="utf-8")
+    index = PlaceIndex.load(cities, FIXTURES / "admin1.tsv")
+    assert len(index) == len(good.strip().splitlines())
+    assert index.skipped == 1  # short rows are ignored silently; unparseable full rows are counted
