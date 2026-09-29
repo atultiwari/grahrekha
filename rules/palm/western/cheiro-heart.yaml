@@ -4,9 +4,10 @@
 # Orientation: Cheiro says the heart line "rises" under the index finger (Mount of
 # Jupiter) or middle finger (Mount of Saturn) and runs to the edge of the palm. In our
 # features that index/middle-side end is lines.heart.end_zone (our lines start at the
-# percussion). Zones: under_index = Mount of Jupiter; under_middle = Mount of Saturn.
-# Cheiro's "between the first and second fingers" is our zone boundary and is therefore
-# never certain; it is not used.
+# percussion). Zones: under_index = Mount of Jupiter; between_index_middle = "between the
+# first and second fingers"; under_middle = Mount of Saturn.
+# Human-drawn heart lines (PLSU) end: under the index 4%, between index and middle 61%,
+# under the middle finger 35% (docs/eval/lines-v1.md).
 # Length thresholds are percentiles of 135 measured palms (positives_v1):
 # p20 = 0.555, p90 = 0.742 palm lengths.
 
@@ -25,7 +26,7 @@
       you care about.
   polarity: positive
   strength: 2
-  excludes: [palm.heart.rises_on_saturn]
+  excludes: [palm.heart.rises_on_saturn, palm.heart.rises_between_index_middle]
   source:
     work: "Cheiro, Palmistry for All (1916)"
     locator: "Chapter VII, The Line of Heart"
@@ -37,9 +38,10 @@
     Cheiro distinguishes the centre and the outer edge of the Mount of Jupiter; we
     cannot yet, so this uses the more moderate "centre" reading.
   validity_blocker: >-
-    The v0 segmenter often stops the heart line short of its index-finger end (114/135
-    palms end under the middle finger; docs/eval/features-v1.md), so this zone is
-    biased. Re-validate with the Phase 2 segmenter before approval.
+    Heart end-zone from the v0 trace agrees with the human-drawn line in 72% of palms;
+    the main error is v0 stopping under the middle finger where the human line reaches
+    the index-middle gap (18/92). Approve only when a segmenter reaches >= 85% agreement
+    (docs/eval/lines-v1.md).
   review: {status: extracted}
 
 - id: palm.heart.rises_on_saturn
@@ -68,9 +70,10 @@
     Cheiro's wording is harsh ("rather selfish"); the statement keeps his meaning but
     not his judgemental tone.
   validity_blocker: >-
-    Fires for most palms because the v0 segmenter truncates the heart line before it
-    reaches the index finger (docs/eval/features-v1.md). Must not be shown until the
-    heart-line end is measured correctly.
+    Heart end-zone from the v0 trace agrees with the human-drawn line in 72% of palms;
+    the main error is v0 stopping under the middle finger where the human line reaches
+    the index-middle gap (18/92). Approve only when a segmenter reaches >= 85% agreement
+    (docs/eval/lines-v1.md).
   review: {status: extracted}
 
 - id: palm.heart.short
@@ -96,8 +99,8 @@
       "The shorter the Line of Heart is on the Hand, the less the higher sentiments of
       the affection make themselves manifest."
   validity_blocker: >-
-    Length is partly an artefact of v0 heart-line truncation; re-validate with the
-    Phase 2 segmenter.
+    v0 sometimes stops the heart line short of the index-middle gap (see heart end-zone
+    agreement, docs/eval/lines-v1.md), which shortens measured length; re-validate.
   review: {status: extracted}
 
 - id: palm.heart.very_long
@@ -121,4 +124,34 @@
     quote: >-
       "When the Line of Heart is found in excess, namely, extremely long--it denotes a
       terrible tendency toward jealousy"
+  review: {status: extracted}
+
+- id: palm.heart.rises_between_index_middle
+  tradition: western
+  engine: palm
+  domain: love_relationships
+  when:
+    and:
+      - "==": [{var: lines.heart.end_zone}, between_index_middle]
+      - "==": [{var: lines.heart.end_zone_certain}, true]
+  statement:
+    en: >-
+      Your heart line reaches into the space between your index and middle fingers.
+      Cheiro read this as a calm but very deep way of loving: not showy, yet capable of
+      great sacrifice for the people you care about.
+  polarity: positive
+  strength: 2
+  excludes: [palm.heart.rises_on_saturn]
+  source:
+    work: "Cheiro, Palmistry for All (1916)"
+    locator: "Chapter VII, The Line of Heart"
+    edition: "Project Gutenberg #20480"
+    quote: >-
+      "The Heart Line rising from between the first and second fingers, gives a calmer
+      but a very deep nature in all matters of the affections"
+  validity_blocker: >-
+    Heart end-zone from the v0 trace agrees with the human-drawn line in 72% of palms;
+    the main error is v0 stopping under the middle finger where the human line reaches
+    the index-middle gap (18/92). Approve only when a segmenter reaches >= 85% agreement
+    (docs/eval/lines-v1.md).
   review: {status: extracted}

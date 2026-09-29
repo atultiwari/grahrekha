@@ -152,6 +152,7 @@
               "enum": [
                 "percussion",
                 "under_index",
+                "between_index_middle",
                 "under_middle",
                 "under_ring",
                 "under_pinky",
@@ -228,6 +229,7 @@
               "enum": [
                 "percussion",
                 "under_index",
+                "between_index_middle",
                 "under_middle",
                 "under_ring",
                 "under_pinky",

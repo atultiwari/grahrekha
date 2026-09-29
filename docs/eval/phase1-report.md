@@ -1,5 +1,12 @@
 # Phase 1 report: palm engine prototype
 
+> **Correction (2026-09-30).** The claim below that v0 "truncates" heart lines (114/135 ending under the middle finger) was **wrong**.
+> - Human-drawn PLSU heart lines also end there: 76% under middle by the old zone boundary.
+> - Heart lines naturally end around the gap between the index and middle fingers. That area is now its own zone (`between_index_middle`), and 61% of human-drawn heart lines end there.
+> - Measured properly, v0's heart end-zone agrees with the human line in **72%** of palms. The remaining error is a mild shortfall (under the middle finger instead of the gap) in about 20% of palms.
+> - See [lines-v1.md](lines-v1.md). Life-line truncation on phone photos remains a visual observation; it cannot be checked on PLSU, whose images crop the palm base.
+
+
 **Date:** 2026-09-29
 **Scope:** photo → quality gate → canonical palm frame → line detection → measured features → cited rules → `/lab` page.
 **Detailed evidence:** [gate-v1.md](gate-v1.md), [lines-v0.md](lines-v0.md), [features-v1.md](features-v1.md).

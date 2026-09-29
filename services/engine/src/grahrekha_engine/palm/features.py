@@ -29,8 +29,14 @@ from grahrekha_engine.palm.types import (
 
 # Zone boundaries (canonical px), anchored to template knuckles:
 # index MCP x=374, middle 500, ring 610, pinky 714; wrist y=880; thumb CMC (309, 761).
+# The gap between index and middle fingers is its own zone (Cheiro's heart line
+# "rising from between the first and second fingers"), defined anatomically as the gap
+# centre (437) +/- a quarter of the knuckle spacing (126 / 4). Human-drawn heart lines
+# end there in 61% of palms (PLSU; docs/eval/lines-v1.md).
+_INDEX_MIDDLE_GAP = (405.5, 468.5)
 _FINGER_BANDS = (
-    (437, "under_index"),
+    (_INDEX_MIDDLE_GAP[0], "under_index"),
+    (_INDEX_MIDDLE_GAP[1], "between_index_middle"),
     (555, "under_middle"),
     (662, "under_ring"),
     (740, "under_pinky"),

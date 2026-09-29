@@ -10,6 +10,7 @@ LineName = Literal["heart", "head", "life", "fate"]
 Zone = Literal[
     "percussion",
     "under_index",
+    "between_index_middle",
     "under_middle",
     "under_ring",
     "under_pinky",

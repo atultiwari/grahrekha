@@ -1,5 +1,12 @@
 # Palm features v1: reliability (Phase 1D)
 
+> **Correction (2026-09-30).** The claim below that v0 "truncates" heart lines (114/135 ending under the middle finger) was **wrong**.
+> - Human-drawn PLSU heart lines also end there: 76% under middle by the old zone boundary.
+> - Heart lines naturally end around the gap between the index and middle fingers. That area is now its own zone (`between_index_middle`), and 61% of human-drawn heart lines end there.
+> - Measured properly, v0's heart end-zone agrees with the human line in **72%** of palms. The remaining error is a mild shortfall (under the middle finger instead of the gap) in about 20% of palms.
+> - See [lines-v1.md](lines-v1.md). Life-line truncation on phone photos remains a visual observation; it cannot be checked on PLSU, whose images crop the palm base.
+
+
 **Date:** 2026-09-29
 
 **Question:** does the same hand, photographed again, give the same features? Readings are only as trustworthy as the features they are built on.

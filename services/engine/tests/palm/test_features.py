@@ -19,7 +19,8 @@ def _trace(
     ("point", "zone"),
     [
         ((780, 480), "percussion"),
-        ((400, 470), "under_index"),
+        ((390, 470), "under_index"),
+        ((437, 470), "between_index_middle"),
         ((500, 470), "under_middle"),
         ((600, 470), "under_ring"),
         ((700, 470), "under_pinky"),
@@ -35,10 +36,10 @@ def test_zones_follow_the_canonical_palm_layout(point: tuple[int, int], zone: st
 
 
 def test_heart_line_is_oriented_from_percussion_to_index() -> None:
-    f = line_features("heart", _trace([(410, 460), (600, 480), (790, 500)]))
+    f = line_features("heart", _trace([(395, 460), (600, 480), (790, 500)]))
     assert f.start_zone == "percussion"
     assert f.end_zone == "under_index"
-    assert f.length == pytest.approx(381 / PALM_UNIT_PX, rel=0.02)
+    assert f.length == pytest.approx(397 / PALM_UNIT_PX, rel=0.02)
 
 
 def test_life_line_runs_top_down_and_reports_its_sweep() -> None:
@@ -135,11 +136,11 @@ def test_index_vs_ring_needs_a_difference_beyond_measurement_noise(
 def test_zone_certainty_depends_on_distance_to_a_boundary() -> None:
     from grahrekha_engine.palm.features import zone_is_certain
 
-    assert zone_is_certain(np.array([500.0, 470.0]))  # middle of "under_middle"
-    assert not zone_is_certain(np.array([440.0, 470.0]))  # 3px from the index/middle boundary
+    assert zone_is_certain(np.array([512.0, 470.0]))  # middle of "under_middle"
+    assert not zone_is_certain(np.array([470.0, 470.0]))  # at the gap/middle boundary
 
 
 def test_line_features_flag_uncertain_endpoints() -> None:
-    f = line_features("heart", _trace([(440, 470), (600, 480), (790, 500)]))
+    f = line_features("heart", _trace([(470, 470), (600, 480), (790, 500)]))
     assert f.start_zone_certain is True  # deep in the percussion
-    assert f.end_zone_certain is False  # right at the index/middle boundary
+    assert f.end_zone_certain is False  # right at the gap/middle boundary

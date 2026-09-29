@@ -52,7 +52,7 @@ Licence: **CC BY 4.0** (see `LICENSE-CONTENT`). The quoted source texts themselv
 
 | File | Rules | Status |
 |---|---|---|
-| `palm/western/cheiro-heart.yaml` | 4 | extracted. Three have validity blockers (v0 heart-line truncation). |
+| `palm/western/cheiro-heart.yaml` | 5 | extracted. Four have validity blockers: heart end-zone agrees with human annotation in only 72% of palms (target 85%). |
 | `palm/western/cheiro-head.yaml` | 5 | extracted. Two use an experimental feature (research arm only). |
 
 **Next:**
