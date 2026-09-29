@@ -59,5 +59,15 @@ files = ["src", "tests"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["mediapipe", "mediapipe.*", "cv2", "cv2.*", "onnxruntime", "onnxruntime.*", "skimage", "skimage.*"]
+module = ["mediapipe", "mediapipe.*", "cv2", "cv2.*", "onnxruntime", "onnxruntime.*"]
 ignore_missing_imports = true
+
+# scikit-image is only partially typed; allow calling its untyped functions from the
+# modules that use it (everything else stays fully strict).
+[[tool.mypy.overrides]]
+module = [
+  "grahrekha_engine.palm.segment.postprocess",
+  "grahrekha_engine.palm.segment.classical",
+  "grahrekha_engine.evaluation.line_metrics",
+]
+disallow_untyped_calls = false
