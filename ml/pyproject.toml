@@ -60,5 +60,5 @@ module = ["cv2", "cv2.*", "scipy", "scipy.*", "skimage", "skimage.*", "segmentat
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = ["grahrekha_ml.labels"]
+module = ["grahrekha_ml.labels", "grahrekha_ml.roboflow_labels"]
 disallow_untyped_calls = false

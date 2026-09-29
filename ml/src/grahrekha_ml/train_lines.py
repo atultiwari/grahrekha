@@ -11,17 +11,31 @@ the canonical palm frame at 512 px. Best checkpoint by mean line Dice on the eva
 import argparse
 import json
 import time
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import segmentation_models_pytorch as smp
 import torch
-from torch.utils.data import DataLoader, Subset, WeightedRandomSampler
+from torch.utils.data import ConcatDataset, DataLoader, Dataset, Subset, WeightedRandomSampler
 
 from grahrekha_ml.dataset import IGNORE_INDEX, LinesDataset, sample_weights
 from grahrekha_ml.losses import LINE_CLASSES, LineLoss
 
 CLASS_NAMES = {1: "heart", 2: "head", 3: "life", 4: "fate"}
+
+
+RUNS = Path(__file__).resolve().parents[2] / "runs"
+
+
+def load_checkpoint(path: Path) -> dict[str, Any]:
+    """torch.load with weights_only=True. Runs before 2026-09-30 stored numpy float64
+    scalars in metadata, so exactly the globals needed for those are allowlisted."""
+    numpy_scalar: Callable[..., Any] = np.float64(0).__reduce__()[0]  # type: ignore[assignment]
+    with torch.serialization.safe_globals([numpy_scalar, np.dtype, type(np.dtype("float64"))]):
+        checkpoint: dict[str, Any] = torch.load(path, map_location="cpu", weights_only=True)
+    return checkpoint
 
 
 def _plain(value: object) -> object:
@@ -81,13 +95,24 @@ def main() -> None:  # pragma: no cover - long-running training
     )
     parser.add_argument("--fate-boost", type=float, default=3.0, help="oversample fate palms")
     parser.add_argument("--fate-weight", type=float, default=3.0, help="fate class loss weight")
+    parser.add_argument("--init-from", help="start from this run's best.pt (fine-tuning)")
+    parser.add_argument(
+        "--extra-train",
+        action="append",
+        default=[],
+        help="more training sets under data/processed (e.g. lines_v2/train); repeatable",
+    )
     args = parser.parse_args()
 
     torch.manual_seed(0)
     root = args.data / "processed/lines_v1"
-    full_train = LinesDataset(root / "train", train=True, seed=0)
-    weights = sample_weights(full_train, args.fate_boost)
-    train_set: LinesDataset | Subset[tuple[torch.Tensor, torch.Tensor]] = full_train
+    parts = [LinesDataset(root / "train", train=True, seed=0)] + [
+        LinesDataset(args.data / "processed" / extra, train=True, seed=i + 1)
+        for i, extra in enumerate(args.extra_train)
+    ]
+    weights = [w for part in parts for w in sample_weights(part, args.fate_boost)]
+    full_train: Dataset[tuple[torch.Tensor, torch.Tensor]] = ConcatDataset(parts)
+    train_set: Dataset[tuple[torch.Tensor, torch.Tensor]] = full_train
     eval_set: LinesDataset | Subset[tuple[torch.Tensor, torch.Tensor]] = LinesDataset(
         root / "eval", train=False
     )
@@ -102,13 +127,16 @@ def main() -> None:  # pragma: no cover - long-running training
     eval_loader = DataLoader(eval_set, batch_size=args.batch, num_workers=2)
 
     dev = device()
-    model = build_model().to(dev)
+    model = build_model()
+    if args.init_from:
+        model.load_state_dict(load_checkpoint(RUNS / args.init_from / "best.pt")["model"])
+    model = model.to(dev)
     loss_fn = LineLoss(class_weights=(0.2, 1.0, 1.0, 1.0, args.fate_weight)).to(dev)
     optimiser = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     schedule = torch.optim.lr_scheduler.OneCycleLR(
         optimiser, max_lr=args.lr, total_steps=args.epochs * len(train_loader), pct_start=0.1
     )
-    run_dir = Path(__file__).resolve().parents[2] / "runs" / args.run
+    run_dir = RUNS / args.run
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "config.json").write_text(
         json.dumps(vars(args) | {"device": str(dev)}, default=str, indent=2)

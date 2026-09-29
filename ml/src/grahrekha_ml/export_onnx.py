@@ -9,28 +9,20 @@ Writes services/engine/models/weights/M9-grahrekha-lines-<run>/{model.onnx,model
 import argparse
 import hashlib
 import json
-from collections.abc import Callable
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import onnxruntime as ort
 import torch
 
-from grahrekha_ml.train_lines import build_model
+from grahrekha_ml.train_lines import build_model, load_checkpoint
 
 ROOT = Path(__file__).resolve().parents[3]
 INPUT = 512
 
 
 def export(run: str) -> Path:
-    # Runs before 2026-09-30 stored numpy float64 scalars in metadata: allow exactly the
-    # globals needed to unpickle those (the scalar constructor and the float64 dtype).
-    numpy_scalar: Callable[..., Any] = np.float64(0).__reduce__()[0]  # type: ignore[assignment]
-    with torch.serialization.safe_globals([numpy_scalar, np.dtype, type(np.dtype("float64"))]):
-        checkpoint = torch.load(
-            ROOT / "ml/runs" / run / "best.pt", map_location="cpu", weights_only=True
-        )
+    checkpoint = load_checkpoint(ROOT / "ml/runs" / run / "best.pt")
     model = build_model(pretrained=False)
     model.load_state_dict(checkpoint["model"])
     model.eval()
