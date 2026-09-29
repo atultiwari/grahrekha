@@ -61,6 +61,8 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
+      - name: Mobile app bundles (Metro resolves workspace packages)
+        run: pnpm --filter @grahrekha/mobile exec expo export --platform android --output-dir "$RUNNER_TEMP/mobile-export"
       - name: One-command DB setup works
         run: pnpm db:reset
       - name: schema.sql snapshot is up to date
