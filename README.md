@@ -57,17 +57,28 @@ Requirements:
 - Optionally, Docker
 
 ```bash
-pnpm install
-pnpm db:reset                     # creates var/app.db (SQLite)
-(cd services/engine && uv sync)   # Python engine deps
-pnpm dev                          # web on :3000
-(cd services/engine && uv run fastapi dev src/grahrekha_engine/main.py)  # engine on :8000
+pnpm install                          # also enables the pre-commit guard (.githooks)
+pnpm db:reset                         # creates var/app.db (SQLite)
+cp .env.example apps/web/.env.local   # web settings, including the engine secret
 ```
 
-Or run everything with Docker:
+Run the engine and web app in two terminals:
 
 ```bash
-docker compose up
+# terminal 1: engine on :8000
+cd services/engine && uv sync
+ENGINE_SHARED_SECRET=local-dev-secret uv run uvicorn grahrekha_engine.server:app --reload --port 8000
+
+# terminal 2: web on :3000
+pnpm dev
+```
+
+Check that everything works: http://localhost:3000/api/health should return `{"web":"ok","engine":{"status":"ok",...}}`.
+
+Or run everything with Docker (it binds to localhost only):
+
+```bash
+docker compose up --build
 ```
 
 **No cloud accounts are needed.** An LLM is optional; readings fall back to templates.
@@ -75,7 +86,7 @@ docker compose up
 **R&D datasets and model weights:**
 
 ```bash
-scripts/fetch-data.sh --tier 1   # ~4.4 GB, see docs/RESOURCES-REGISTRY.md
+scripts/fetch-data.sh --tier 1   # ~4.4 GB, verified against data/checksums.sha256
 ```
 
 ## Contributing

@@ -1,11 +1,15 @@
 # One-command local stack: `docker compose up --build`, then open http://localhost:3000
-# No cloud accounts needed. Secrets below are for local development only.
+# No cloud accounts needed.
+#
+# Ports bind to 127.0.0.1 only, so nothing is reachable from your LAN or café Wi-Fi.
+# The default secret is for local development only. Set ENGINE_SHARED_SECRET in your
+# shell or a root .env file for anything else.
 services:
   engine:
     build: ./services/engine
     environment:
       ENGINE_SHARED_SECRET: ${ENGINE_SHARED_SECRET:-local-dev-secret}
-    ports: ["8000:8000"]
+    ports: ["127.0.0.1:8000:8000"]
 
   web:
     build:
@@ -14,9 +18,9 @@ services:
     environment:
       ENGINE_URL: http://engine:8000
       ENGINE_SHARED_SECRET: ${ENGINE_SHARED_SECRET:-local-dev-secret}
-    ports: ["3000:3000"]
+    ports: ["127.0.0.1:3000:3000"]
     depends_on:
       engine:
         condition: service_healthy
-    volumes:
-      - ./var:/app/var
+    # A var/ volume (SQLite + uploads) is added in Phase 5, with a container
+    # directory owned by the non-root user.

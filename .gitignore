@@ -2,6 +2,7 @@
 data/*
 !data/README.md
 !data/manifest.yaml
+!data/checksums.sha256
 services/engine/models/weights/
 *.onnx
 *.pth

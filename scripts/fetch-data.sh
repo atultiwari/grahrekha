@@ -27,10 +27,23 @@ touch "$LOG"
 want() { [[ -z "$ONLY" || ",$ONLY," == *",$1,"* ]]; }
 done_marker() { [[ -f "$1/.done" ]]; }
 
-record() { # id file url
-  local bytes sha
-  bytes=$(stat -f%z "$2" 2>/dev/null || stat -c%s "$2")
+CHECKSUMS="$ROOT/data/checksums.sha256"
+
+file_size() { # GNU stat first: on Linux, `stat -f` means "filesystem status" and succeeds with junk
+  stat -c%s "$1" 2>/dev/null || stat -f%z "$1"
+}
+
+record() { # id file url — verifies against data/checksums.sha256 when an entry exists
+  local key bytes sha expected
+  key="$1/$(basename "$2")"
+  bytes=$(file_size "$2")
   sha=$(shasum -a 256 "$2" | cut -d' ' -f1)
+  expected=$(awk -v k="$key" '$2 == k {print $1}' "$CHECKSUMS" 2>/dev/null || true)
+  if [[ -n "$expected" && "$expected" != "$sha" ]]; then
+    echo "CHECKSUM MISMATCH for $key: expected $expected, got $sha. Deleting download." >&2
+    rm -f "$2"; exit 1
+  fi
+  [[ -z "$expected" ]] && echo "note: no pinned checksum for $key (new item?) sha256=$sha" >&2
   printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$1" "${2#$ROOT/}" "$bytes" "$sha" "$3" "$(date -u +%FT%TZ)" >> "$LOG"
 }
 
@@ -167,7 +180,7 @@ if [[ "$TIER" -ge 1 ]]; then
 
   d="$WEIGHTS/M2-palm-line-reader"
   if item M2 "$d"; then
-    base="https://raw.githubusercontent.com/samuelwbarber/palm-line-reader/main"
+    base="https://raw.githubusercontent.com/samuelwbarber/palm-line-reader/bc48939f4deee6d8ff842bfde499396dab9c4830"  # pinned commit
     for f in models/student_fp16.onnx models/student_fp32.onnx models/student_int8.onnx models/model_meta.json \
              docs/example1_input.png docs/example2_input.png docs/example3_input.png docs/example4_input.png; do
       out="$d/$(basename "$f")"; curl_get "$base/$f" "$out"; record M2 "$out" "$base/$f"
@@ -177,7 +190,7 @@ if [[ "$TIER" -ge 1 ]]; then
 
   d="$WEIGHTS/M3-yeonsumia"
   if item M3 "$d"; then
-    base="https://raw.githubusercontent.com/yeonsumia/palmistry/main"
+    base="https://raw.githubusercontent.com/yeonsumia/palmistry/17610c3f031ee312d3352116eefff9b833e9cafb"  # pinned commit
     curl_get "$base/code/checkpoint/checkpoint_aug_epoch70.pth" "$d/checkpoint_aug_epoch70.pth"
     record M3 "$d/checkpoint_aug_epoch70.pth" "$base/code/checkpoint/checkpoint_aug_epoch70.pth"
     mkdir -p "$RAW/M3-yeonsumia-samples"
