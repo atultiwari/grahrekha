@@ -1,4 +1,4 @@
-import type { AstroChartV1, BirthDataV1, PlacesResponseV1 } from "@grahrekha/contracts";
+import type { AstroReadingV1, BirthDataV1, PlacesResponseV1 } from "@grahrekha/contracts";
 import { z } from "zod";
 import { EngineError, type EngineClient } from "./engine-client";
 
@@ -6,7 +6,7 @@ const MIN_QUERY_LENGTH = 2; // one character matches a large share of all place 
 const MAX_QUERY_LENGTH = 100;
 const PLACE_RESULTS = 8;
 
-type LabAstroEngine = Pick<EngineClient, "searchPlaces" | "astroChart">;
+type LabAstroEngine = Pick<EngineClient, "searchPlaces" | "astroReading">;
 
 export interface LabAstroResult<T> {
   status: number;
@@ -75,7 +75,7 @@ export async function handleLabChart(
   body: unknown,
   engine: LabAstroEngine,
   today: Date = new Date(),
-): Promise<LabAstroResult<AstroChartV1>> {
+): Promise<LabAstroResult<AstroReadingV1>> {
   const parsed = BirthFormSchema.safeParse(body);
   if (!parsed.success) {
     return { status: 400, body: { error: parsed.error.issues[0]?.message ?? "Invalid birth details." } };
@@ -83,7 +83,8 @@ export async function handleLabChart(
   // The lab uses today's (UTC) date for the "current" dasha; stored readings will pin it.
   const referenceDate = today.toISOString().slice(0, 10);
   try {
-    return { status: 200, body: await engine.astroChart(toBirthData(parsed.data), referenceDate) };
+    // The lab shows unreviewed rules (D-008); production readings will not.
+    return { status: 200, body: await engine.astroReading(toBirthData(parsed.data), referenceDate, true) };
   } catch (error) {
     return engineFailure(error);
   }

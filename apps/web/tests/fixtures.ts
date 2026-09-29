@@ -98,3 +98,37 @@ export function placesFixture() {
     ],
   } as const;
 }
+
+export function readingFixture() {
+  return {
+    schema_version: "astro_reading.v1",
+    chart: chartFixture(),
+    features: {
+      schema_version: "astro_features.v1",
+      time_confidence: "exact",
+      moon_nakshatra_uncertain: false,
+      lagna_sign: "Leo",
+      planets: {
+        Moon: { sign: "Cancer", house: 12, navamsa_sign: "Scorpio", retrograde: false },
+      },
+      mahadasha: { lord: "Jupiter", houses_ruled: [5, 8] },
+      antardasha: { lord: "Saturn", houses_ruled: [6, 7] },
+    },
+    rules: {
+      rulebase_version: "abc123",
+      fired: [
+        {
+          id: "astro.jc.mahadasha_lord_rules_trikona",
+          domain: "life_path_timing",
+          polarity: "positive",
+          strength: 2,
+          statement: { en: "Supportive period." },
+          source: { work: "Jataka Chandrika", locator: "Stanza V", edition: null, quote: "Lords of the 5th and 9th houses are always good" },
+          status: "extracted",
+          mapping_note: null,
+          validity_blocker: null,
+        },
+      ],
+    },
+  } as const;
+}

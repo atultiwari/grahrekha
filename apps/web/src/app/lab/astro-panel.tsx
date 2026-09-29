@@ -1,10 +1,11 @@
 "use client";
 
-import type { AstroChartV1, PlaceV1, PlacesResponseV1 } from "@grahrekha/contracts";
+import type { AstroChartV1, AstroReadingV1, PlaceV1, PlacesResponseV1 } from "@grahrekha/contracts";
 import { useEffect, useState } from "react";
+import { RuleCard } from "./rule-card";
 
 type Confidence = "exact" | "approximate" | "unknown";
-type ChartResponse = AstroChartV1 | { error: string };
+type ChartResponse = AstroReadingV1 | { error: string };
 
 const SEARCH_DELAY_MS = 250;
 
@@ -177,7 +178,24 @@ export function AstroPanel() {
           {result.error}
         </p>
       )}
-      {result && "planets" in result && <Chart chart={result} />}
+      {result && "chart" in result && (
+        <>
+          <Chart chart={result.chart} />
+          <div className="space-y-2 text-sm">
+            <h3 className="font-semibold">
+              Reading (unreviewed rules, rule base {result.rules.rulebase_version})
+            </h3>
+            {result.rules.fired.length === 0 && (
+              <p>No rules matched. House and dasha rules need an exact birth time.</p>
+            )}
+            <ul className="space-y-3">
+              {result.rules.fired.map((rule) => (
+                <RuleCard key={rule.id} rule={rule} />
+              ))}
+            </ul>
+          </div>
+        </>
+      )}
     </section>
   );
 }

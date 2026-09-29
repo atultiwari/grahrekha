@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import { EngineError } from "../src/server/engine-client";
 import { handleLabChart, handleLabPlaces } from "../src/server/lab-astro";
-import { chartFixture, placesFixture } from "./fixtures";
+import { placesFixture, readingFixture } from "./fixtures";
 
 const engine = () => ({
   searchPlaces: vi.fn().mockResolvedValue(placesFixture()),
-  astroChart: vi.fn().mockResolvedValue(chartFixture()),
+  astroReading: vi.fn().mockResolvedValue(readingFixture()),
 });
 
 const BIRTH = { birth_date: "1996-07-04", birth_time: "09:10", time_confidence: "exact", latitude: 25.3, longitude: 83.0 };
@@ -40,7 +40,7 @@ describe("lab chart", () => {
     [422, 400, "Check the birth details"],
   ])("maps engine %i to %i without leaking engine details", async (engineStatus, status, message) => {
     const e = engine();
-    e.astroChart.mockRejectedValue(new EngineError("x", engineStatus, "engine secret mismatch"));
+    e.astroReading.mockRejectedValue(new EngineError("x", engineStatus, "engine secret mismatch"));
     const result = await handleLabChart(BIRTH, e, TODAY);
     expect(result.status).toBe(status);
     expect(result.body).toEqual({ error: expect.stringContaining(message) });
@@ -50,18 +50,20 @@ describe("lab chart", () => {
     const e = engine();
     const result = await handleLabChart(BIRTH, e, TODAY);
     expect(result.status).toBe(200);
-    expect(e.astroChart).toHaveBeenCalledWith(
+    expect(e.astroReading).toHaveBeenCalledWith(
       expect.objectContaining({ birth_time: "09:10:00", time_confidence: "exact" }),
       "2026-09-30",
+      true,
     );
   });
 
   it("sends an unknown time as null with confidence 'unknown'", async () => {
     const e = engine();
     await handleLabChart({ ...BIRTH, birth_time: "", time_confidence: "unknown" }, e, TODAY);
-    expect(e.astroChart).toHaveBeenCalledWith(
+    expect(e.astroReading).toHaveBeenCalledWith(
       expect.objectContaining({ birth_time: null, time_confidence: "unknown" }),
       "2026-09-30",
+      true,
     );
   });
 
@@ -76,6 +78,6 @@ describe("lab chart", () => {
     const e = engine();
     const result = await handleLabChart(body, e, TODAY);
     expect(result.status).toBe(400);
-    expect(e.astroChart).not.toHaveBeenCalled();
+    expect(e.astroReading).not.toHaveBeenCalled();
   });
 });

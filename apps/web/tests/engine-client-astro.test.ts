@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { createEngineClient } from "../src/server/engine-client";
-import { chartFixture, placesFixture } from "./fixtures";
+import { chartFixture, placesFixture, readingFixture } from "./fixtures";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
@@ -42,5 +42,17 @@ describe("engine client: astrology", () => {
     const fetchFn = vi.fn().mockResolvedValue(json({ ...chartFixture(), lagna_sign: "Ophiuchus" }));
     const engine = createEngineClient({ baseUrl: "http://e", secret: "s", fetchFn });
     await expect(engine.astroChart(BIRTH, "2026-09-30")).rejects.toMatchObject({ status: 502 });
+  });
+
+  it("requests a reading with the lab flag and validates it", async () => {
+    const fetchFn = vi.fn().mockResolvedValue(json(readingFixture()));
+    const engine = createEngineClient({ baseUrl: "http://e", secret: "s", fetchFn });
+
+    const reading = await engine.astroReading(BIRTH, "2026-09-30", true);
+
+    expect(reading.rules.fired[0]?.id).toBe("astro.jc.mahadasha_lord_rules_trikona");
+    const [url, init] = fetchFn.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe("http://e/v1/astro/reading");
+    expect(JSON.parse(init.body as string)).toEqual({ birth: BIRTH, reference_date: "2026-09-30", include_unreviewed: true });
   });
 });

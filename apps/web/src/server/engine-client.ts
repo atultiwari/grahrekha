@@ -1,10 +1,12 @@
 import {
   AstroChartV1Schema,
+  AstroReadingV1Schema,
   HealthResponseV1Schema,
   PalmAnalysisV1Schema,
   PlacesResponseV1Schema,
   RulesResponseV1Schema,
   type AstroChartV1,
+  type AstroReadingV1,
   type BirthDataV1,
   type HealthResponseV1,
   type PalmAnalysisV1,
@@ -110,6 +112,15 @@ export function createEngineClient({ baseUrl, secret, fetchFn = fetch, timeoutMs
       request("/v1/astro/chart", AstroChartV1Schema, {
         method: "POST",
         body: JSON.stringify({ birth, reference_date: referenceDate }),
+        headers: { "content-type": "application/json" },
+        timeoutMs: 30_000,
+      }),
+
+    /** Chart + features + fired rules. `includeUnreviewed` is for the lab only (D-008). */
+    astroReading: (birth: BirthDataV1, referenceDate: string, includeUnreviewed: boolean): Promise<AstroReadingV1> =>
+      request("/v1/astro/reading", AstroReadingV1Schema, {
+        method: "POST",
+        body: JSON.stringify({ birth, reference_date: referenceDate, include_unreviewed: includeUnreviewed }),
         headers: { "content-type": "application/json" },
         timeoutMs: 30_000,
       }),
