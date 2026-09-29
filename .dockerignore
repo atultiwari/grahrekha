@@ -1,0 +1,11 @@
+**/node_modules
+**/.next
+**/coverage
+**/.turbo
+**/.venv
+data
+var
+services/engine/models/weights
+.git
+.env*
+!.env.example

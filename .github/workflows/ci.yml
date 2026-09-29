@@ -49,10 +49,39 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
       - run: pnpm install --frozen-lockfile
+      - name: Generated contracts are up to date
+        run: |
+          (cd services/engine && uv sync --locked)
+          pnpm contracts:gen
+          git diff --exit-code packages/contracts
+      - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
       - name: One-command DB setup works
         run: pnpm db:reset
       - name: schema.sql snapshot is up to date
         run: pnpm --filter @grahrekha/db snapshot && git diff --exit-code db/schema.sql
+
+  docker:
+    name: docker compose smoke test
+    runs-on: ubuntu-latest
+    needs: [engine, typescript]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and start the stack
+        run: docker compose up --build --detach --wait --wait-timeout 180
+      - name: Web reaches engine through the API layer
+        run: |
+          for i in $(seq 1 30); do body=$(curl -fsS http://localhost:3000/api/health) && break; sleep 2; done
+          echo "$body"
+          test "$body" = '{"web":"ok","engine":{"status":"ok","version":"0.1.0"}}'
+      - name: Engine protects /v1 routes
+        run: test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8000/v1/ping)" = "401"
+      - if: failure()
+        run: docker compose logs
+      - if: always()
+        run: docker compose down -v

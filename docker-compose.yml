@@ -1,0 +1,22 @@
+# One-command local stack: `docker compose up --build`, then open http://localhost:3000
+# No cloud accounts needed. Secrets below are for local development only.
+services:
+  engine:
+    build: ./services/engine
+    environment:
+      ENGINE_SHARED_SECRET: ${ENGINE_SHARED_SECRET:-local-dev-secret}
+    ports: ["8000:8000"]
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      ENGINE_URL: http://engine:8000
+      ENGINE_SHARED_SECRET: ${ENGINE_SHARED_SECRET:-local-dev-secret}
+    ports: ["3000:3000"]
+    depends_on:
+      engine:
+        condition: service_healthy
+    volumes:
+      - ./var:/app/var
