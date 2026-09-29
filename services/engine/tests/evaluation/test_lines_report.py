@@ -22,7 +22,7 @@ def test_report_averages_only_gate_passing_images() -> None:
     # F1 is the mean of per-image F1 scores (0.686), not F1 of the mean P/R (0.700).
     assert "| traced lines | 2.5% of palm length | 0.700 | 0.700 | 0.686 |" in text
     assert "Lines traced per palm: 0: 0, 1: 0, 2: 1, 3: 1" in text
-    assert "Fate line reported (classical): 1/2" in text
+    assert "Fate line reported: 1/2" in text
 
 
 def test_traces_are_rasterised_back_into_original_image_coordinates() -> None:

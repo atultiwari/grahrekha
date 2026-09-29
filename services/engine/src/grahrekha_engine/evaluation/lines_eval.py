@@ -10,6 +10,7 @@ ground truth (Roboflow sets or our own annotation, Phase 2).
 
 import argparse
 import csv
+import json
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -19,14 +20,11 @@ from numpy.typing import NDArray
 from PIL import Image
 
 from grahrekha_engine.evaluation.line_metrics import LineScores, tolerant_scores
-from grahrekha_engine.palm.gate import evaluate_gate
 from grahrekha_engine.palm.geometry import palm_length
 from grahrekha_engine.palm.image_io import decode_image
-from grahrekha_engine.palm.landmarks import HandLandmarkDetector
-from grahrekha_engine.palm.rectify import RectifiedPalm, rectify
-from grahrekha_engine.palm.segment.classical import detect_fate_line
-from grahrekha_engine.palm.segment.postprocess import LineTrace, trace_line
-from grahrekha_engine.palm.segment.v0 import LINE_CLASSES, PalmLineReaderV0
+from grahrekha_engine.palm.pipeline import PalmAnalyzer, Segmenter
+from grahrekha_engine.palm.rectify import RectifiedPalm
+from grahrekha_engine.palm.segment.postprocess import LineTrace
 
 WEIGHTS = Path(__file__).resolve().parents[3] / "models/weights"
 TOLERANCES = (0.015, 0.025)  # fraction of palm length
@@ -64,48 +62,45 @@ def _raw_mask(
     return result
 
 
-def evaluate(data: Path, split: str = "lines_eval_v1.tsv") -> list[ImageResult]:
-    model = PalmLineReaderV0(WEIGHTS / "M2-palm-line-reader/student_fp16.onnx")
+def evaluate(
+    data: Path, segmenter: Segmenter = "v0", split: str = "lines_eval_v1.tsv"
+) -> list[ImageResult]:
+    """Scores the production code path (PalmAnalyzer.inspect) for the chosen segmenter."""
+    analyzer = PalmAnalyzer(WEIGHTS, segmenter)
     results = []
-    with (
-        HandLandmarkDetector(WEIGHTS / "M1-mediapipe/hand_landmarker.task") as detector,
-        (data / "splits" / split).open(newline="") as f,
-    ):
-        for row in csv.DictReader(f, delimiter="\t"):
-            image = decode_image((data / row["path"]).read_bytes())
-            h, w = image.shape[:2]
-            mask_path = data / row["extra"].split('"mask": "')[1].split('"')[0]
-            truth = (
-                np.asarray(
+    try:
+        with (data / "splits" / split).open(newline="") as f:
+            for row in csv.DictReader(f, delimiter="\t"):
+                image = decode_image((data / row["path"]).read_bytes())
+                h, w = image.shape[:2]
+                mask_path = data / json.loads(row["extra"])["mask"]
+                mask_image = (
                     Image.open(mask_path).convert("L").resize((w, h), Image.Resampling.NEAREST)
                 )
-                > 127
-            )
-            gate = evaluate_gate(image, detector.detect(image))
-            if gate.detection is None or not gate.passed:
-                results.append(ImageResult(row["path"], False, {}, {}, {}, 0, False))
-                continue
-            rect = rectify(image, gate.detection)
-            probs = model.predict(image, gate.detection, rect)
-            traces = [
-                t for i in range(len(LINE_CLASSES)) if (t := trace_line(probs[i])) is not None
-            ]
-            fate = detect_fate_line(rect.image)
-            raw = _raw_mask(probs, rect, (h, w))
-            traced = _raster_traces(traces, rect, (h, w))
-            with_fate = _raster_traces([*traces, fate] if fate else traces, rect, (h, w))
-            length = palm_length(gate.detection.landmarks)
-            results.append(
-                ImageResult(
-                    row["path"],
-                    True,
-                    {t: tolerant_scores(raw, truth, t * length) for t in TOLERANCES},
-                    {t: tolerant_scores(traced, truth, t * length) for t in TOLERANCES},
-                    {t: tolerant_scores(with_fate, truth, t * length) for t in TOLERANCES},
-                    len(traces),
-                    fate is not None,
+                truth = np.asarray(mask_image) > 127
+                found = analyzer.inspect(image)
+                if found.rect is None or found.probs is None or found.gate.detection is None:
+                    results.append(ImageResult(row["path"], False, {}, {}, {}, 0, False))
+                    continue
+                core = [t for name, t in found.traces.items() if name != "fate"]
+                everything = list(found.traces.values())
+                raw = _raw_mask(found.probs, found.rect, (h, w))
+                traced = _raster_traces(core, found.rect, (h, w))
+                with_fate = _raster_traces(everything, found.rect, (h, w))
+                length = palm_length(found.gate.detection.landmarks)
+                results.append(
+                    ImageResult(
+                        row["path"],
+                        True,
+                        {t: tolerant_scores(raw, truth, t * length) for t in TOLERANCES},
+                        {t: tolerant_scores(traced, truth, t * length) for t in TOLERANCES},
+                        {t: tolerant_scores(with_fate, truth, t * length) for t in TOLERANCES},
+                        len(core),
+                        "fate" in found.traces,
+                    )
                 )
-            )
+    finally:
+        analyzer.close()
     return results
 
 
@@ -122,7 +117,7 @@ def report(results: list[ImageResult]) -> str:
     outputs = (
         ("raw model (p>0.5)", "raw"),
         ("traced lines", "traced"),
-        ("traced + classical fate line", "with_fate"),
+        ("traced + fate line", "with_fate"),
     )
     for label, attr in outputs:
         for t in TOLERANCES:
@@ -136,7 +131,7 @@ def report(results: list[ImageResult]) -> str:
     lines += [
         "",
         "Lines traced per palm: " + ", ".join(f"{i}: {n}" for i, n in enumerate(found)),
-        f"Fate line reported (classical): {fates}/{len(scored)}",
+        f"Fate line reported: {fates}/{len(scored)}",
     ]
     return "\n".join(lines) + "\n"
 
@@ -145,8 +140,9 @@ def main() -> None:  # pragma: no cover - needs datasets and models
     parser = argparse.ArgumentParser()
     parser.add_argument("data", type=Path)
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--segmenter", choices=["v0", "v1"], default="v0")
     args = parser.parse_args()
-    text = report(evaluate(args.data))
+    text = report(evaluate(args.data, args.segmenter))
     print(text)
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)

@@ -35,3 +35,7 @@ coverage/
 *.tsbuildinfo
 .mypy_cache/
 .ruff_cache/
+
+# Training runs (checkpoints, logs)
+ml/runs/
+*.log

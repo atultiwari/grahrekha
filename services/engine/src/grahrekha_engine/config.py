@@ -1,6 +1,7 @@
 """Engine settings, read from environment variables prefixed with ENGINE_."""
 
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -19,6 +20,8 @@ class Settings(BaseSettings):
     shared_secret: str
     # Downloaded model weights (scripts/fetch-data.sh --only M1,M2).
     models_dir: Path = Path(__file__).resolve().parents[2] / "models" / "weights"
+    # Line segmenter: v0 (borrowed, prototype) or v1 (our own, Phase 2).
+    segmenter: Literal["v0", "v1"] = "v0"
     # Interpretation rule base (repository rules/, CC BY 4.0). In containers, mount it
     # and set ENGINE_RULES_DIR (docker-compose.yml does).
     rules_dir: Path = Field(default_factory=lambda: _repo_rules_dir())

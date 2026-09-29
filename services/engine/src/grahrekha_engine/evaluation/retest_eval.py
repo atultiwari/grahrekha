@@ -129,8 +129,9 @@ def main() -> None:  # pragma: no cover - needs datasets and models
     parser = argparse.ArgumentParser()
     parser.add_argument("data", type=Path)
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--segmenter", choices=["v0", "v1"], default="v0")
     args = parser.parse_args()
-    analyzer = PalmAnalyzer(MODELS)
+    analyzer = PalmAnalyzer(MODELS, args.segmenter)
     groups: dict[str, list[PalmFeaturesV1]] = defaultdict(list)
     latencies, rejected = [], 0
     try:
