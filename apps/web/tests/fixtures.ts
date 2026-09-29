@@ -47,3 +47,52 @@ export function analysisFixture(): PalmAnalysisV1 {
     feature_hash: "f".repeat(64),
   };
 }
+
+export function chartFixture() {
+  return {
+    schema_version: "astro_chart.v1",
+    provider: "jyotishganit-0.1.3",
+    ayanamsa: "true-chitrapaksha",
+    timezone: "Asia/Kolkata",
+    utc_offset_hours: 5.5,
+    time_confidence: "exact",
+    lagna_sign: "Leo",
+    lagna_degree: 12.5,
+    planets: [
+      {
+        planet: "Moon",
+        longitude: 100.5,
+        sign: "Cancer",
+        degree_in_sign: 10.5,
+        nakshatra: "Pushya",
+        pada: 3,
+        house: 12,
+        retrograde: false,
+      },
+    ],
+    moon_nakshatra: "Pushya",
+    moon_nakshatra_uncertain: false,
+    mahadashas: [{ lord: "Jupiter", start: "2020-01-01", end: "2036-01-01" }],
+    current_mahadasha: "Jupiter",
+    current_antardasha: "Saturn",
+  } as const;
+}
+
+export function placesFixture() {
+  return {
+    schema_version: "places_response.v1",
+    attribution: "GeoNames, geonames.org (CC BY 4.0)",
+    places: [
+      {
+        geoname_id: 1253405,
+        name: "Varanasi",
+        region: "Uttar Pradesh",
+        country: "IN",
+        latitude: 25.31668,
+        longitude: 83.01041,
+        timezone: "Asia/Kolkata",
+        population: 1164404,
+      },
+    ],
+  } as const;
+}

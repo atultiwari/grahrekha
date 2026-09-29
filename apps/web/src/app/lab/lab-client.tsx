@@ -2,6 +2,7 @@
 
 import type { FiredRuleV1, PalmAnalysisV1, RulesResponseV1 } from "@grahrekha/contracts";
 import { useState } from "react";
+import { AstroPanel } from "./astro-panel";
 
 type LabResponse = { analysis: PalmAnalysisV1; rules: RulesResponseV1 | null } | { error: string };
 
@@ -92,6 +93,9 @@ export function LabClient() {
       {result && "analysis" in result && preview && (
         <Results analysis={result.analysis} rules={result.rules} preview={preview} />
       )}
+
+      <hr />
+      <AstroPanel />
     </main>
   );
 }

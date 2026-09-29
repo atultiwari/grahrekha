@@ -1,10 +1,15 @@
 import {
+  AstroChartV1Schema,
   HealthResponseV1Schema,
   PalmAnalysisV1Schema,
+  PlacesResponseV1Schema,
   RulesResponseV1Schema,
+  type AstroChartV1,
+  type BirthDataV1,
   type HealthResponseV1,
   type PalmAnalysisV1,
   type PalmFeaturesV1,
+  type PlacesResponseV1,
   type RulesResponseV1,
 } from "@grahrekha/contracts";
 import type { ZodType, ZodTypeDef } from "zod";
@@ -93,6 +98,20 @@ export function createEngineClient({ baseUrl, secret, fetchFn = fetch, timeoutMs
         method: "POST",
         body: JSON.stringify({ features, include_unreviewed: includeUnreviewed }),
         headers: { "content-type": "application/json" },
+      }),
+
+    searchPlaces: (query: string, limit: number): Promise<PlacesResponseV1> => {
+      const params = new URLSearchParams({ q: query, limit: String(limit) });
+      return request(`/v1/places?${params.toString()}`, PlacesResponseV1Schema);
+    },
+
+    /** `referenceDate` (YYYY-MM-DD) fixes which dasha is "current", keeping results reproducible. */
+    astroChart: (birth: BirthDataV1, referenceDate: string): Promise<AstroChartV1> =>
+      request("/v1/astro/chart", AstroChartV1Schema, {
+        method: "POST",
+        body: JSON.stringify({ birth, reference_date: referenceDate }),
+        headers: { "content-type": "application/json" },
+        timeoutMs: 30_000,
       }),
   };
 }
