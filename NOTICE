@@ -1,0 +1,13 @@
+GrahRekha
+Copyright 2026 Atul Tiwari and GrahRekha contributors
+
+Source code in this repository is licensed under the Apache License, Version 2.0
+(see LICENSE), except:
+  - rules/, docs/ and research/ content, licensed under Creative Commons
+    Attribution 4.0 International (see LICENSE-CONTENT);
+  - adapters-agpl/, licensed under the GNU Affero General Public License v3.0
+    (see adapters-agpl/LICENSE). Core code never imports it (see docs/DECISIONS.md D-011).
+
+Third-party datasets and model weights are NOT distributed with this repository.
+They are fetched by scripts/fetch-data.sh under their own terms and are listed,
+with licences, in data/manifest.yaml and docs/RESOURCES-REGISTRY.md.

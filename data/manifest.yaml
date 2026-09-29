@@ -1,0 +1,328 @@
+# R&D data and model sources (committed; the data itself is git-ignored).
+# Every item has: a landing page, direct download URL(s), size, login need, licence.
+# Per-file SHA-256 checksums are appended by scripts/fetch-data.sh to data/fetch-log.tsv.
+# Registry and owner decisions: docs/RESOURCES-REGISTRY.md. Policy: docs/DECISIONS.md D-014.
+# Google Drive direct form: https://drive.usercontent.google.com/download?id=<ID>&export=download&confirm=t
+# Kaggle direct form (no login): https://www.kaggle.com/api/v1/datasets/download/<owner>/<slug>
+# Checked: 2026-09-29
+
+datasets:
+  # ---------------- Tier 1
+  - id: D1
+    name: 11K Hands (images + metadata)
+    tier: 1
+    purpose: [positives, negatives-dorsal]
+    page: https://sites.google.com/view/11khands
+    download:
+      - https://drive.google.com/file/d/1KcMYcNJgtK1zZvfl_9sTqnyBUTri2aP2/view   # Hands.zip
+      - https://huggingface.co/datasets/Zicara/Hands_11k/resolve/main/Hands.zip # mirror
+      - https://drive.google.com/file/d/1RC86-rVOR8c93XAfM9b9R45L7C2B0FdA/view   # HandInfo.csv
+    size_bytes: 662833682
+    login: false
+    license: academic fair use
+    local: data/raw/D1-11k-hands
+  - id: D2
+    name: PLSU palm-line segmentation
+    tier: 1
+    purpose: [line-labels-binary]
+    page: https://arxiv.org/abs/2102.12127
+    download:
+      - https://link.sun-asterisk.vn/palmlinedataset
+      - https://drive.google.com/file/d/1B4uj-b4RuUNkC_oeCsRkuih4rjuQ6tHH/view
+    size_bytes: 161982242
+    login: false
+    license: none stated (ask Sun* Inc.)
+    local: data/raw/D2-plsu
+  - id: D3
+    name: AxonData palm-recognition (smartphone sample)
+    tier: 1
+    purpose: [positives-phone, test-retest]
+    page: https://huggingface.co/datasets/AxonData/palm-recognition-dataset
+    download: [hf://datasets/AxonData/palm-recognition-dataset]
+    size_bytes: ~909700000
+    login: false
+    license: CC BY-NC 4.0
+    local: data/raw/D3-axondata-palm-recognition
+  - id: D4
+    name: Human palm images (feyiamujo)
+    tier: 1
+    purpose: [positives]
+    page: https://www.kaggle.com/datasets/feyiamujo/human-palm-images
+    download: [https://www.kaggle.com/api/v1/datasets/download/feyiamujo/human-palm-images]
+    size_bytes: 968789738
+    login: false
+    license: CC BY 4.0
+    local: data/raw/D4-human-palm-images
+  - id: D5
+    name: palmprint-v1i-crease
+    tier: 1
+    purpose: [line-labels]
+    page: https://www.kaggle.com/datasets/tmtrnhelloworld/palmprint-v1i-crease
+    download: [https://www.kaggle.com/api/v1/datasets/download/tmtrnhelloworld/palmprint-v1i-crease]
+    size_bytes: 357728832
+    login: false
+    license: CC0 (derived from MPD, academic)
+    local: data/raw/D5-palmprint-crease
+  - id: D6
+    name: QuickDraw hand drawings
+    tier: 1
+    purpose: [negatives-drawings]
+    page: https://github.com/googlecreativelab/quickdraw-dataset
+    download: [https://storage.googleapis.com/quickdraw_dataset/full/simplified/hand.ndjson]
+    size_bytes: 128200083
+    login: false
+    license: CC BY 4.0
+    local: data/raw/D6-quickdraw-hand
+  - id: D7
+    name: Imagenette2-320
+    tier: 1
+    purpose: [negatives-objects]
+    page: https://github.com/fastai/imagenette
+    download: [https://s3.amazonaws.com/fast-ai-imageclas/imagenette2-320.tgz]
+    size_bytes: 341663724
+    login: false
+    license: ImageNet terms (research)
+    local: data/raw/D7-imagenette2-320
+  - id: D8
+    name: Oxford-IIIT Pets (test split, parquet)
+    tier: 1
+    purpose: [negatives-animals]
+    page: https://huggingface.co/datasets/timm/oxford-iiit-pet
+    download: ["hf://datasets/timm/oxford-iiit-pet (include data/test*)"]
+    size_bytes: 412654113
+    login: false
+    license: CC BY-SA 4.0
+    local: data/raw/D8-oxford-pets-test
+  - id: D9
+    name: LFW sample (faces)
+    tier: 1
+    purpose: [negatives-faces]
+    page: https://huggingface.co/datasets/0xmoose/lfw-sample
+    download: [hf://datasets/0xmoose/lfw-sample]
+    size_bytes: ~900000
+    login: false
+    license: research
+    local: data/raw/D9-lfw-sample
+  - id: D10
+    name: Diabetic foot ulcer photos (feet)
+    tier: 1
+    purpose: [negatives-feet]
+    page: https://www.kaggle.com/datasets/laithjj/diabetic-foot-ulcer-dfu
+    download: [https://www.kaggle.com/api/v1/datasets/download/laithjj/diabetic-foot-ulcer-dfu]
+    size_bytes: 134983157
+    login: false
+    license: unverified
+    local: data/raw/D10-dfu-feet
+  - id: D11
+    name: Hand Segmentation in the Wild (HOF + EYTH)
+    tier: 1
+    purpose: [hand-segmentation, hard-negatives]
+    page: https://github.com/aurooj/Hand-Segmentation-in-the-Wild
+    download:
+      - https://drive.google.com/file/d/1hHUvINGICvOGcaDgA5zMbzAIUv7ewDd3/view   # HOF
+      - https://drive.google.com/file/d/1-OmtqYBVmAstCzOKz8xpatw6lk9hUm--/view   # HOF test
+      - https://drive.google.com/file/d/1EwjJx-V-Gq7NZtfiT6LZPLGXD2HN--qT/view   # EYTH
+    size_bytes: 57596780
+    login: false
+    license: unclear
+    local: data/raw/D11-hand-seg-wild
+
+  # ---------------- Tier 2 (not downloaded yet)
+  - id: D12
+    name: 11K Hands skin masks
+    tier: 2
+    download: ["https://drive.google.com/file/d/0B6CktEG1p54Wa2VzdktNY2Q0YlU/view?resourcekey=0-s91SAvu-RqXKlirv3eYtnw"]
+    also: [https://huggingface.co/datasets/Zicara/Hands_11k]   # Hands512x.zip 2.30 GB, Hands1152x.zip 8.89 GB
+    size_bytes: 1688736876
+    login: false
+    license: academic
+  - id: D13
+    name: HaGRID sample 30k 384p
+    tier: 2
+    page: https://github.com/hukenovs/hagrid
+    download:
+      - https://huggingface.co/datasets/cj-mills/hagrid-sample-30k-384p/resolve/main/hagrid-sample-30k-384p.zip
+    also: [https://huggingface.co/datasets/cj-mills/hagrid-sample-120k-384p, https://huggingface.co/datasets/cj-mills/hagrid-classification-512p-no-gesture-150k]
+    size_bytes: 1009688861
+    login: false
+    license: CC BY-SA 4.0 variant
+  - id: D14
+    name: BMPD Birjand mobile palmprint
+    tier: 2
+    download: [https://www.kaggle.com/api/v1/datasets/download/mahdieizadpanah/birjand-university-mobile-palmprint-databasebmpd]
+    page: https://www.kaggle.com/datasets/mahdieizadpanah/birjand-university-mobile-palmprint-databasebmpd
+    size_bytes: 1788196371
+    login: false
+    license: unknown
+  - id: D15
+    name: SMPD Sapienza mobile palmprint
+    tier: 2
+    page: https://www.kaggle.com/search?q=SMPD+palmprint   # exact slug to confirm when fetching
+    size_bytes: 6365761274
+    login: false
+    license: unknown
+  - id: D16
+    name: Tongji contactless palmprint
+    tier: 2
+    page: https://cslinzhang.github.io/ContactlessPalm/
+    download:
+      - https://drive.google.com/file/d/1KZCXi6zAk5mZ1nQHFdeYHboAII3DOjls/view   # ROI.rar 98 MB
+      - https://drive.google.com/file/d/15hEsOm0fZKUHpFNChPSjwiRfMczxcnVQ/view   # Original Images.rar 4.95 GB
+      - https://www.kaggle.com/datasets/loinguyen57/tongji-roi                    # mirror 139 MB
+    login: false
+    license: none stated
+  - id: D17
+    name: UniDataPro open-palm-hand-images
+    tier: 2
+    download: [https://huggingface.co/datasets/UniDataPro/open-palm-hand-images, https://huggingface.co/datasets/ud-biometrics/open-palm-hand-images]
+    size_bytes: ~181000000
+    login: false
+    license: CC BY-NC-ND 4.0 (paid full set = potential vendor)
+  - id: D18
+    name: COCO val2017
+    tier: 2
+    download: [http://images.cocodataset.org/zips/val2017.zip, http://images.cocodataset.org/annotations/annotations_trainval2017.zip]
+    size_bytes: 815585330
+    login: false
+    license: CC BY (per image)
+  - id: D19
+    name: Oxford-IIIT Pets full
+    tier: 2
+    download: [https://thor.robots.ox.ac.uk/pets/images.tar.gz]
+    size_bytes: 791918971
+    login: false
+    license: CC BY-SA 4.0
+  - id: D20
+    name: CelebA-HQ 256 (one shard)
+    tier: 2
+    download: [https://huggingface.co/datasets/korexyz/celeba-hq-256x256]
+    size_bytes: ~461000000
+    login: false
+    license: research only
+  - id: D21
+    name: QuickDraw foot
+    tier: 2
+    download: [https://storage.googleapis.com/quickdraw_dataset/full/numpy_bitmap/foot.npy, https://storage.googleapis.com/quickdraw_dataset/full/numpy_bitmap/hand.npy]
+    size_bytes: 159219504
+    login: false
+    license: CC BY 4.0
+  - id: D22
+    name: EgoHands (Kaggle mirrors; original IU link dead)
+    tier: 2
+    download:
+      - https://www.kaggle.com/api/v1/datasets/download/henrikvendelbo/egohands-public
+      - https://www.kaggle.com/api/v1/datasets/download/himaniishah/egohands
+      - https://drive.google.com/file/d/1WwGNsOhjk3hIKEnDoCKplFvMNroMCxtZ/view   # fine_egohands+
+    size_bytes: 327469107
+    login: false
+    license: CC BY 4.0
+  - id: D23
+    name: Palm-Astro-Application sample data
+    tier: 2
+    page: https://github.com/lakshay102/Palm-Astro-Application
+    download: [https://github.com/lakshay102/Palm-Astro-Application/tree/main/data]
+    login: false
+    license: none
+  - id: D23b
+    name: Kaggle 11K mirror / dorsal-hands subset
+    tier: 2
+    download:
+      - https://www.kaggle.com/api/v1/datasets/download/shyambhu/hands-and-palm-images-dataset
+      - https://www.kaggle.com/api/v1/datasets/download/mdmuhaiminulislam/dorsal-hands-dataset
+    login: false
+    license: academic (11K origin)
+  - id: D23c
+    name: Animal pose dataset (for paw crops)
+    tier: 2
+    download: [https://www.kaggle.com/api/v1/datasets/download/bloodaxe/animal-pose-dataset]
+    size_bytes: ~368000000   # unverified
+    login: false
+
+  # ---------------- Tier 3 (owner login/request needed)
+  - id: D24
+    name: Roboflow Universe palm-line sets (per-line classes)
+    tier: 3
+    login: true   # free Roboflow account + API key / Export button
+    download:
+      - https://universe.roboflow.com/docseg/palmistry-kp
+      - https://universe.roboflow.com/cv2project-uu3kn/palmistry-zbcbn
+      - https://universe.roboflow.com/24rd021/palm-reading-itwlw
+      - https://universe.roboflow.com/palmlinesdetection/palmlinesdetection
+      - https://universe.roboflow.com/palmveda/lines-ermuj
+      - https://universe.roboflow.com/dstu-dfliv/palm-lines-recognition
+      - https://universe.roboflow.com/palmistry-ccmq5/palmistry-dhpnb
+      - https://universe.roboflow.com/palmistry-2klz8/palmistry-g45zz
+      - https://universe.roboflow.com/fudan-university-bntkx/palm-line-detect
+      - https://universe.roboflow.com/palm-reading-test/palm-line-segmentation
+      - https://universe.roboflow.com/leo-ueno/palm-reading-b3tep
+    license: mostly CC BY 4.0 (image provenance undocumented)
+  - id: D25
+    name: MPD Tongji Mobile Palmprint
+    tier: 3
+    page: https://cslinzhang.github.io/MobilePalmPrint/
+    download: ["https://pan.baidu.com/s/1L3i9ghI9sY9yIVeTSEFswg (code: ofaj)"]
+    login: true
+    license: academic
+  - id: D26
+    name: IITD Touchless Palmprint
+    tier: 3
+    page: https://www4.comp.polyu.edu.hk/~csajaykr/IITD/Database_Palm.htm
+    login: true   # application form + email
+    license: research only, commercial prohibited
+
+models:
+  - id: M1
+    name: MediaPipe hand_landmarker.task
+    download: [https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task]
+    size_bytes: 7819105
+    license: Apache-2.0
+    local: services/engine/models/weights/M1-mediapipe
+  - id: M2
+    name: palm-line-reader ONNX (bg/heart/head/life)
+    page: https://github.com/samuelwbarber/palm-line-reader
+    download:
+      - https://raw.githubusercontent.com/samuelwbarber/palm-line-reader/main/models/student_fp16.onnx
+      - https://raw.githubusercontent.com/samuelwbarber/palm-line-reader/main/models/student_fp32.onnx
+      - https://raw.githubusercontent.com/samuelwbarber/palm-line-reader/main/models/student_int8.onnx
+      - https://raw.githubusercontent.com/samuelwbarber/palm-line-reader/main/models/model_meta.json
+    size_bytes: 39519028
+    license: code MIT; weights trained on scraped Reddit photos
+    local: services/engine/models/weights/M2-palm-line-reader
+  - id: M3
+    name: yeonsumia palm-line U-Net checkpoint
+    page: https://github.com/yeonsumia/palmistry
+    download:
+      - https://raw.githubusercontent.com/yeonsumia/palmistry/main/code/checkpoint/checkpoint_aug_epoch70.pth
+      - https://raw.githubusercontent.com/yeonsumia/palmistry/main/detect/checkpoints/checkpoint_epoch35.pth
+    size_bytes: 55490203
+    license: repo Apache-2.0; model code GPL-derived; weights from PLSU
+    local: services/engine/models/weights/M3-yeonsumia
+  - id: M4
+    name: Diff-Palm ema_0.9999.pt
+    page: https://github.com/Ukuer/Diff-Palm
+    download: [https://drive.google.com/file/d/1vQya0fgrSh-PkFsDBi0OM89_rfSiO3u6/view, "https://pan.baidu.com/s/1p6B2TmYfQCdUQdcZRztLVw?pwd=q835"]
+    size_bytes: 87021838
+    license: code Apache-2.0
+  - id: M5
+    name: PCE-Palm checkpoints
+    page: https://github.com/Ukuer/PCE-Palm
+    download:
+      - https://drive.google.com/file/d/1epH7GV3g9fk4_RwOX8x-uMo5iKOlj0I4/view   # palm1600.zip
+      - https://drive.google.com/file/d/1r_1vdrVaqrBjuBktBKaj5fEwIXzbka8s/view   # bezier_m1600.zip
+    size_bytes: 261885947
+    license: code Apache-2.0
+  - id: M6
+    name: RPG-Palm palm_full.zip
+    page: https://github.com/Ukuer/rpg-palm
+    download: [https://drive.google.com/file/d/1P-Z2lem3lRCu99oEReJhzYwBP6dzCuMn/view]
+    size_bytes: 217632415
+    license: code Apache-2.0
+  - id: M7
+    name: Palm-Astro-Application best_model.pth
+    download: [https://raw.githubusercontent.com/lakshay102/Palm-Astro-Application/main/results/best_model.pth]
+    size_bytes: 57424071
+    license: none
+  - id: M8
+    name: Akiyue/Palmistry YOLO-pose
+    download: [https://huggingface.co/Akiyue/Palmistry]
+    license: unknown (YOLO = AGPL)
