@@ -1,21 +1,9 @@
 """Evaluate rules against features: deterministic selection with citations."""
 
-from grahrekha_engine.contracts import Contract
 from grahrekha_engine.contracts.palm import PalmFeaturesV1
+from grahrekha_engine.contracts.rules import FiredRuleV1, SourceV1
 from grahrekha_engine.rules.jsonlogic import evaluate
-from grahrekha_engine.rules.model import Rule, Source, Status
-
-
-class FiredRuleV1(Contract):
-    id: str
-    domain: str
-    polarity: str
-    strength: int
-    statement: dict[str, str]
-    source: Source
-    status: Status
-    mapping_note: str | None = None
-    validity_blocker: str | None = None
+from grahrekha_engine.rules.model import Rule, Status
 
 
 def evaluate_rules(
@@ -50,7 +38,7 @@ def evaluate_rules(
             polarity=r.polarity,
             strength=r.strength,
             statement=dict(r.statement),
-            source=r.source,
+            source=SourceV1.model_validate(r.source.model_dump()),
             status=r.review.status,
             mapping_note=r.mapping_note,
             validity_blocker=r.validity_blocker,

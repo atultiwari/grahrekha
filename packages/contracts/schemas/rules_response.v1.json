@@ -1,0 +1,148 @@
+{
+  "$defs": {
+    "FiredRuleV1": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "mapping_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mapping Note"
+        },
+        "polarity": {
+          "enum": [
+            "positive",
+            "neutral",
+            "caution"
+          ],
+          "title": "Polarity",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceV1"
+        },
+        "statement": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Statement",
+          "type": "object"
+        },
+        "status": {
+          "enum": [
+            "extracted",
+            "reviewed",
+            "approved",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "strength": {
+          "title": "Strength",
+          "type": "integer"
+        },
+        "validity_blocker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Validity Blocker"
+        }
+      },
+      "required": [
+        "id",
+        "domain",
+        "polarity",
+        "strength",
+        "statement",
+        "source",
+        "status"
+      ],
+      "title": "FiredRuleV1",
+      "type": "object"
+    },
+    "SourceV1": {
+      "additionalProperties": false,
+      "properties": {
+        "edition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Edition"
+        },
+        "locator": {
+          "title": "Locator",
+          "type": "string"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quote"
+        },
+        "work": {
+          "title": "Work",
+          "type": "string"
+        }
+      },
+      "required": [
+        "work",
+        "locator"
+      ],
+      "title": "SourceV1",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "fired": {
+      "items": {
+        "$ref": "#/$defs/FiredRuleV1"
+      },
+      "title": "Fired",
+      "type": "array"
+    },
+    "rulebase_version": {
+      "title": "Rulebase Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "rulebase_version",
+    "fired"
+  ],
+  "title": "RulesResponseV1",
+  "type": "object"
+}

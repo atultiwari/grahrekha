@@ -19,10 +19,13 @@ class HealthResponse(Contract):
 
 def _contracts() -> list[tuple[str, type[Contract]]]:
     from grahrekha_engine.contracts.palm import PalmAnalysisV1
+    from grahrekha_engine.contracts.rules import RulesRequestV1, RulesResponseV1
 
     return [
         ("health_response.v1", HealthResponse),
         ("palm_analysis.v1", PalmAnalysisV1),
+        ("rules_request.v1", RulesRequestV1),
+        ("rules_response.v1", RulesResponseV1),
     ]
 
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { HealthResponseV1Schema, type HealthResponseV1 } from "../src";
-import { exportName, stripNestedTitles } from "../scripts/gen";
+import { buildIndex, exportName, stripNestedTitles } from "../scripts/gen";
 
 describe("generated contracts", () => {
   it("validates a well-formed health response", () => {
@@ -27,5 +27,13 @@ describe("generated contracts", () => {
       title: "HealthResponse",
       properties: { status: { type: "string" }, tags: { items: [{}] } },
     });
+  });
+
+  it("re-exports a shared model only once across contracts", () => {
+    const a = "export interface Shared {}\nexport interface A {}\nexport const ASchema = 1";
+    const b = "export interface Shared {}\nexport interface B {}";
+    expect(buildIndex([{ module: "a.v1", source: a }, { module: "b.v1", source: b }])).toBe(
+      'export type { Shared, A } from "./a.v1";\nexport { ASchema } from "./a.v1";\nexport type { B } from "./b.v1";',
+    );
   });
 });

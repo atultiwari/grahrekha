@@ -10,22 +10,12 @@ from fastapi import APIRouter, Depends, FastAPI, File, Form, HTTPException, Uplo
 from grahrekha_engine import __version__
 from grahrekha_engine.auth import require_shared_secret
 from grahrekha_engine.config import Settings
-from grahrekha_engine.contracts import Contract, HealthResponse
-from grahrekha_engine.contracts.palm import PalmAnalysisV1, PalmFeaturesV1
+from grahrekha_engine.contracts import HealthResponse
+from grahrekha_engine.contracts.palm import PalmAnalysisV1
+from grahrekha_engine.contracts.rules import RulesRequestV1, RulesResponseV1
 from grahrekha_engine.palm.image_io import MAX_UPLOAD_BYTES, InvalidImageError
-from grahrekha_engine.rules.engine import FiredRuleV1, evaluate_rules
+from grahrekha_engine.rules.engine import evaluate_rules
 from grahrekha_engine.rules.model import load_rules, rulebase_version
-
-
-class RulesRequestV1(Contract):
-    features: PalmFeaturesV1
-    # Lab only: also fire rules not yet approved by a reviewer (D-008). Never in production.
-    include_unreviewed: bool = False
-
-
-class RulesResponseV1(Contract):
-    rulebase_version: str
-    fired: list[FiredRuleV1]
 
 
 class Analyzer(Protocol):

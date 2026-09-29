@@ -1,62 +1,5 @@
 {
   "$defs": {
-    "GateIssueV1": {
-      "additionalProperties": false,
-      "properties": {
-        "code": {
-          "title": "Code",
-          "type": "string"
-        },
-        "message": {
-          "title": "Message",
-          "type": "string"
-        }
-      },
-      "required": [
-        "code",
-        "message"
-      ],
-      "title": "GateIssueV1",
-      "type": "object"
-    },
-    "GateReportV1": {
-      "additionalProperties": false,
-      "properties": {
-        "metrics": {
-          "additionalProperties": {
-            "type": "number"
-          },
-          "title": "Metrics",
-          "type": "object"
-        },
-        "passed": {
-          "title": "Passed",
-          "type": "boolean"
-        },
-        "reasons": {
-          "items": {
-            "$ref": "#/$defs/GateIssueV1"
-          },
-          "title": "Reasons",
-          "type": "array"
-        },
-        "warnings": {
-          "items": {
-            "$ref": "#/$defs/GateIssueV1"
-          },
-          "title": "Warnings",
-          "type": "array"
-        }
-      },
-      "required": [
-        "passed",
-        "reasons",
-        "warnings",
-        "metrics"
-      ],
-      "title": "GateReportV1",
-      "type": "object"
-    },
     "HandGeometryV1": {
       "additionalProperties": false,
       "properties": {
@@ -271,76 +214,6 @@
       "title": "LineFeaturesV1",
       "type": "object"
     },
-    "OverlayV1": {
-      "additionalProperties": false,
-      "description": "Everything needed to draw on the user's ORIGINAL photo (pixel coordinates).",
-      "properties": {
-        "height": {
-          "title": "Height",
-          "type": "integer"
-        },
-        "landmarks": {
-          "items": {
-            "maxItems": 2,
-            "minItems": 2,
-            "prefixItems": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "number"
-              }
-            ],
-            "type": "array"
-          },
-          "title": "Landmarks",
-          "type": "array"
-        },
-        "lines": {
-          "additionalProperties": {
-            "items": {
-              "items": {
-                "maxItems": 2,
-                "minItems": 2,
-                "prefixItems": [
-                  {
-                    "type": "number"
-                  },
-                  {
-                    "type": "number"
-                  }
-                ],
-                "type": "array"
-              },
-              "type": "array"
-            },
-            "type": "array"
-          },
-          "propertyNames": {
-            "enum": [
-              "heart",
-              "head",
-              "life",
-              "fate"
-            ]
-          },
-          "title": "Lines",
-          "type": "object"
-        },
-        "width": {
-          "title": "Width",
-          "type": "integer"
-        }
-      },
-      "required": [
-        "width",
-        "height",
-        "landmarks",
-        "lines"
-      ],
-      "title": "OverlayV1",
-      "type": "object"
-    },
     "PalmFeaturesV1": {
       "additionalProperties": false,
       "properties": {
@@ -413,53 +286,18 @@
   },
   "additionalProperties": false,
   "properties": {
-    "feature_hash": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "title": "Feature Hash"
-    },
     "features": {
-      "anyOf": [
-        {
-          "$ref": "#/$defs/PalmFeaturesV1"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null
+      "$ref": "#/$defs/PalmFeaturesV1"
     },
-    "gate": {
-      "$ref": "#/$defs/GateReportV1"
-    },
-    "overlay": {
-      "anyOf": [
-        {
-          "$ref": "#/$defs/OverlayV1"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null
-    },
-    "schema_version": {
-      "const": "palm_analysis.v1",
-      "default": "palm_analysis.v1",
-      "title": "Schema Version",
-      "type": "string"
+    "include_unreviewed": {
+      "default": false,
+      "title": "Include Unreviewed",
+      "type": "boolean"
     }
   },
   "required": [
-    "gate"
+    "features"
   ],
-  "title": "PalmAnalysisV1",
+  "title": "RulesRequestV1",
   "type": "object"
 }

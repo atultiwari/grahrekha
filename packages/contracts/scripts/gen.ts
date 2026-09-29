@@ -39,6 +39,33 @@ export function stripNestedTitles(schema: unknown, isRoot = true): unknown {
   return Object.fromEntries(entries);
 }
 
+/** Names a generated file exports, split into types (interface/type) and values (const). */
+export function exportedNames(source: string): { types: string[]; values: string[] } {
+  const types = [...source.matchAll(/^export (?:interface|type) (\w+)/gm)].map((m) => m[1] as string);
+  const values = [...source.matchAll(/^export const (\w+)/gm)].map((m) => m[1] as string);
+  return { types, values };
+}
+
+/**
+ * Contracts can embed the same model (e.g. PalmFeaturesV1 in two requests), so
+ * `export *` from every file would export duplicate names. Re-export each name once,
+ * from the first file that defines it (identical definitions come from one Pydantic
+ * model). Types use `export type` (required under isolatedModules).
+ */
+export function buildIndex(files: { module: string; source: string }[]): string {
+  const seen = new Set<string>();
+  const lines: string[] = [];
+  const fresh = (names: string[]) => names.filter((n) => !seen.has(n) && (seen.add(n), true));
+  for (const { module, source } of files) {
+    const { types, values } = exportedNames(source);
+    const newTypes = fresh(types);
+    const newValues = fresh(values);
+    if (newTypes.length) lines.push(`export type { ${newTypes.join(", ")} } from "./${module}";`);
+    if (newValues.length) lines.push(`export { ${newValues.join(", ")} } from "./${module}";`);
+  }
+  return lines.join("\n");
+}
+
 async function main(): Promise<void> {
   rmSync(schemaDir, { recursive: true, force: true });
   rmSync(outDir, { recursive: true, force: true });
@@ -48,19 +75,19 @@ async function main(): Promise<void> {
     stdio: "inherit",
   });
 
-  const names: string[] = [];
+  const files: { module: string; source: string }[] = [];
   for (const file of readdirSync(schemaDir).filter((f) => f.endsWith(".json")).sort()) {
     const contract = basename(file, ".json");
     const name = exportName(contract);
     const schema = stripNestedTitles(JSON.parse(readFileSync(join(schemaDir, file), "utf8"))) as object;
     const ts = await compile({ ...schema, title: name }, name, { bannerComment: "", additionalProperties: false });
     const zod = jsonSchemaToZod(schema, { name: `${name}Schema`, module: "esm" });
-    writeFileSync(join(outDir, `${contract}.ts`), `${HEADER}${ts}\n${zod}\n`);
-    names.push(contract);
+    const source = `${HEADER}${ts}\n${zod}\n`;
+    writeFileSync(join(outDir, `${contract}.ts`), source);
+    files.push({ module: contract, source });
   }
-  const index = names.map((c) => `export * from "./${c}";`).join("\n");
-  writeFileSync(join(outDir, "index.ts"), `${HEADER}${index}\n`);
-  console.info(`generated ${names.length} contract(s)`);
+  writeFileSync(join(outDir, "index.ts"), `${HEADER}${buildIndex(files)}\n`);
+  console.info(`generated ${files.length} contract(s)`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
