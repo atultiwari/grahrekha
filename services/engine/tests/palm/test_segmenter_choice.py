@@ -5,7 +5,7 @@ from grahrekha_engine.palm.pipeline import LINE_MODELS, resolve_segmenter
 
 
 def _install(models: Path, segmenter: str) -> None:
-    path = models / LINE_MODELS[segmenter]  # type: ignore[index]
+    path = models / LINE_MODELS[segmenter]
     path.parent.mkdir(parents=True)
     path.write_bytes(b"onnx")
 
