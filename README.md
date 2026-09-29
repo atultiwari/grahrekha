@@ -17,7 +17,7 @@ The two engines are kept **deliberately separate**. That way we can test honestl
 
 ## Status
 
-**Phase 0 (foundations):** see the [implementation plan](docs/IMPLEMENTATION-PLAN.md).
+**Phase 0 (foundations) is complete.** Next is Phase 1, the palm engine prototype. See the [implementation plan](docs/IMPLEMENTATION-PLAN.md).
 
 ## How it works
 

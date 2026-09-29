@@ -50,6 +50,12 @@ gantt
 
 **Exit:** a fresh clone runs end to end with `docker compose up`, with no cloud accounts. CI is green.
 
+**Status (2026-09-29): done.** Public repo https://github.com/atultiwari/grahrekha; CI covers the guard, engine, TypeScript, the mobile bundle and a docker compose smoke test.
+
+Changes from the original plan:
+- `packages/ui`, `packages/i18n` and `packages/reading` (the Narrator interface) are created in the phases that first give them content (Phases 4–5), rather than as empty shells.
+- The `StorageAdapter` and provider registry (entry points, AGPL boundary test) are done.
+
 ---
 
 ## Phase 1: Palm engine prototype (milestone 1, about 4 weeks)
