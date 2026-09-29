@@ -90,14 +90,14 @@ def rectify(image: RGBImage, detection: HandDetection) -> RectifiedPalm:
     forward = _fit_affine(src, dst)
     inverse = cv2.invertAffineTransform(forward).astype(np.float64)
     residual = _apply(forward, src) - dst
-    warped = cv2.warpAffine(
+    warped: RGBImage = cv2.warpAffine(
         image,
         forward,
         (CANONICAL_SIZE, CANONICAL_SIZE),
         flags=cv2.INTER_LINEAR,
         borderMode=cv2.BORDER_CONSTANT,
         borderValue=(0, 0, 0),
-    )
+    ).astype(np.uint8)
     return RectifiedPalm(
         image=warped,
         forward=forward,
