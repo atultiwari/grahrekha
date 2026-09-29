@@ -33,11 +33,16 @@ file_size() { # GNU stat first: on Linux, `stat -f` means "filesystem status" an
   stat -c%s "$1" 2>/dev/null || stat -f%z "$1"
 }
 
+sha256_of() { # portable: shasum (macOS, Perl) or sha256sum (Debian/Alpine coreutils)
+  if command -v shasum >/dev/null 2>&1; then shasum -a 256 "$1" | cut -d' ' -f1
+  else sha256sum "$1" | cut -d' ' -f1; fi
+}
+
 record() { # id file url — verifies against data/checksums.sha256 when an entry exists
   local key bytes sha expected
   key="$1/$(basename "$2")"
   bytes=$(file_size "$2")
-  sha=$(shasum -a 256 "$2" | cut -d' ' -f1)
+  sha=$(sha256_of "$2")
   expected=$(awk -v k="$key" '$2 == k {print $1}' "$CHECKSUMS" 2>/dev/null || true)
   if [[ -n "$expected" && "$expected" != "$sha" ]]; then
     echo "CHECKSUM MISMATCH for $key: expected $expected, got $sha. Deleting download." >&2
@@ -178,6 +183,12 @@ if [[ "$TIER" -ge 1 ]]; then
   fi
 
   # ---- models
+  d="$WEIGHTS/A1-de421"
+  if item A1 "$d"; then
+    u="https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de421.bsp"
+    curl_get "$u" "$d/de421.bsp"; record A1 "$d/de421.bsp" "$u"; finish "$d"
+  fi
+
   d="$WEIGHTS/M1-mediapipe"
   if item M1 "$d"; then
     u="https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task"

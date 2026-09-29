@@ -109,6 +109,13 @@ jobs:
       - name: Engine protects /v1 routes (checked from inside the web container)
         run: |
           docker compose exec -T web node -e "fetch('http://engine:8000/v1/ping').then(r => process.exit(r.status === 401 ? 0 : 1))"
+      - name: Astrology works inside the isolated engine (offline ephemeris, D-016)
+        run: |
+          docker compose exec -T web node -e "
+            fetch('http://engine:8000/v1/astro/chart', {method: 'POST',
+              headers: {'content-type': 'application/json', 'X-Engine-Secret': process.env.ENGINE_SHARED_SECRET},
+              body: JSON.stringify({birth: {birth_date: '1996-07-04', birth_time: '09:10:00', time_confidence: 'exact', latitude: 18.404, longitude: 75.195}, reference_date: '2026-09-30'})})
+            .then(r => r.json()).then(b => { console.log(b.lagna_sign, b.current_mahadasha); process.exit(b.lagna_sign === 'Leo' && b.current_mahadasha === 'Jupiter' ? 0 : 1); })"
       - name: Engine has no internet access (D-016)
         run: |
           if docker compose exec -T engine python -c "import urllib.request; urllib.request.urlopen('https://www.google.com', timeout=5)"; then

@@ -4,8 +4,14 @@
 **/.turbo
 **/.venv
 data
+!data/checksums.sha256
 var
 services/engine/models/weights
 .git
 .env*
 !.env.example
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/.coverage
+ml/runs

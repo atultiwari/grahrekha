@@ -6,6 +6,7 @@ license = "Apache-2.0"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "fastapi[standard]>=0.115",
+  "jyotishganit>=0.1.3",
   "mediapipe>=0.10.20,<0.11",
   "numpy>=2.0",
   "onnxruntime>=1.20",
@@ -15,6 +16,7 @@ dependencies = [
   "pydantic-settings>=2.6",
   "pyyaml>=6.0",
   "scikit-image>=0.24",
+  "timezonefinder>=6.5",
 ]
 
 [project.optional-dependencies]
@@ -61,7 +63,7 @@ files = ["src", "tests"]
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["mediapipe", "mediapipe.*", "cv2", "cv2.*", "onnxruntime", "onnxruntime.*"]
+module = ["mediapipe", "mediapipe.*", "cv2", "cv2.*", "onnxruntime", "onnxruntime.*", "jyotishganit", "jyotishganit.*", "skyfield", "skyfield.*", "timezonefinder", "timezonefinder.*"]
 ignore_missing_imports = true
 
 # scikit-image is only partially typed; allow calling its untyped functions from the

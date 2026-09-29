@@ -279,6 +279,13 @@ texts:
     local: data/raw/B1-cheiro-palmistry-for-all
 
 models:
+  - id: A1
+    name: NASA JPL DE421 planetary ephemeris (for the astrology engine)
+    page: https://ssd.jpl.nasa.gov/planets/eph_export.html
+    download: [https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de421.bsp]
+    size_bytes: 16788480
+    license: US government work (public domain)
+    local: services/engine/models/weights/A1-de421
   - id: M1
     name: MediaPipe hand_landmarker.task
     download: [https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task]

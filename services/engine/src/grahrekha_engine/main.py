@@ -3,6 +3,7 @@
 import threading
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
+from datetime import date
 from typing import Annotated, Literal, Protocol
 
 from fastapi import APIRouter, Depends, FastAPI, File, Form, HTTPException, UploadFile, status
@@ -10,12 +11,19 @@ from fastapi import APIRouter, Depends, FastAPI, File, Form, HTTPException, Uplo
 from grahrekha_engine import __version__
 from grahrekha_engine.auth import require_shared_secret
 from grahrekha_engine.config import Settings
-from grahrekha_engine.contracts import HealthResponse
+from grahrekha_engine.contracts import Contract, HealthResponse
+from grahrekha_engine.contracts.astro import AstroChartV1, BirthDataV1
 from grahrekha_engine.contracts.palm import PalmAnalysisV1
 from grahrekha_engine.contracts.rules import RulesRequestV1, RulesResponseV1
 from grahrekha_engine.palm.image_io import MAX_UPLOAD_BYTES, InvalidImageError
 from grahrekha_engine.rules.engine import evaluate_rules
 from grahrekha_engine.rules.model import load_rules, rulebase_version
+
+
+class AstroRequestV1(Contract):
+    birth: BirthDataV1
+    # "Current" dasha is computed for this date (explicit, so results are reproducible).
+    reference_date: date
 
 
 class Analyzer(Protocol):
@@ -106,6 +114,23 @@ def create_app(
         )
         fired = evaluate_rules(request.features, rules, statuses=statuses)  # type: ignore[arg-type]
         return RulesResponseV1(rulebase_version=version, fired=fired)
+
+    ephemeris = resolved.models_dir / "A1-de421" / "de421.bsp"
+
+    @v1.post("/astro/chart")
+    def astro_chart(request: AstroRequestV1) -> AstroChartV1:
+        if not ephemeris.exists():
+            raise HTTPException(
+                status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="astrology ephemeris is not installed (scripts/fetch-data.sh --only A1)",
+            )
+        from grahrekha_engine.astro.chart import compute_chart  # heavy imports, lazily
+        from grahrekha_engine.astro.timezones import TimezoneError
+
+        try:
+            return compute_chart(request.birth, ephemeris, request.reference_date)
+        except TimezoneError as error:
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(error)) from error
 
     app.include_router(v1)
     return app
