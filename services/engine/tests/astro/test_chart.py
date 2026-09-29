@@ -100,3 +100,43 @@ def test_birth_data_validation() -> None:
         BirthDataV1(birth_date=date(2000, 1, 1), time_confidence="exact", latitude=0, longitude=0)
     with pytest.raises(ValueError):
         BirthDataV1(birth_date=date(2000, 1, 1), birth_time=time(1, 0), latitude=0, longitude=0)
+
+
+# Reference: Swiss Ephemeris 2.10.03 (Moshier), sidereal mean lunar node, True Citra
+# ayanamsa; computed 2026-09-30 in adapters-agpl/ (validate_astro.py). Plain numbers.
+@pytest.mark.parametrize(
+    ("birth", "swiss_rahu"),
+    [
+        (
+            BirthDataV1(
+                birth_date=date(1930, 3, 15),
+                birth_time=time(12, 0),
+                time_confidence="exact",
+                latitude=28.61,
+                longitude=77.21,
+            ),
+            12.1887,
+        ),  # Delhi, 06:30 UTC
+        (
+            BirthDataV1(
+                birth_date=date(2020, 6, 1),
+                birth_time=time(6, 30),
+                time_confidence="exact",
+                latitude=51.51,
+                longitude=-0.13,
+            ),
+            66.0525,
+        ),  # London (BST), 05:30 UTC
+    ],
+)
+def test_rahu_is_corrected_for_precession(
+    ephemeris_path: Path, birth: BirthDataV1, swiss_rahu: float
+) -> None:
+    # jyotishganit 0.1.3 subtracts a J2000 ayanamsa from an of-date mean node, so its
+    # Rahu drifts by precession (~1.4 deg/century from 2000). We correct it.
+    chart = compute_chart(birth, ephemeris_path, reference_date=date(2026, 9, 30))
+    rahu = next(p for p in chart.planets if p.planet == "Rahu")
+    ketu = next(p for p in chart.planets if p.planet == "Ketu")
+    assert abs(((rahu.longitude - swiss_rahu) + 180) % 360 - 180) < 0.02
+    assert SIGNS[int(rahu.longitude // 30)] == rahu.sign
+    assert abs(((rahu.longitude - ketu.longitude) % 360) - 180) < 1e-6

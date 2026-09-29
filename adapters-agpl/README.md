@@ -21,4 +21,5 @@ We want to **measure** whether they beat the permissive defaults before deciding
 
 ## Status
 
-The package is empty for now. The first providers (pyswisseph, PyJHora) arrive in Phase 3 (astrology engine) for the provider comparison.
+- `validate_astro.py`: validates the default (MIT) astrology engine against Swiss Ephemeris. It runs in CI. Results: [docs/eval/astro-validation.md](../docs/eval/astro-validation.md).
+- **No production provider here yet.** The MIT engine meets the accuracy targets, so none is needed for now (D-005).

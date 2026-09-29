@@ -55,7 +55,7 @@ Statuses: **Accepted** / **Proposed** / **Superseded**.
 - **Revisit:** if maintaining two UIs becomes a bottleneck. Then consider Expo Router for web, or reducing the web app to a landing-plus-funnel site.
 
 ## D-005: jyotishganit (MIT) is the default astrology provider; AGPL providers are optional add-ons
-**Status:** Accepted (revised by D-011). The final choice depends on the provider comparison.
+**Status:** Accepted (revised by D-011). **Validated 2026-09-30** against Swiss Ephemeris: planets ≤ 0.003°, nodes 0.0007° after our precession fix, dashas ≤ 1 day (docs/eval/astro-validation.md). No commercial Swiss Ephemeris licence is needed for accuracy.
 
 - **Context:** pyswisseph, kerykeion and PyJHora are AGPL. Swiss Ephemeris needs a paid professional licence for closed-source hosted use.
 - **Decision:**

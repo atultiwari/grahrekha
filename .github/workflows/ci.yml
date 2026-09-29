@@ -64,6 +64,25 @@ jobs:
       - run: uv run mypy
       - run: uv run pytest -q
 
+  agpl:
+    name: AGPL adapters (astrology validation vs Swiss Ephemeris)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+      - name: Fetch the pinned DE421 ephemeris
+        run: bash scripts/fetch-data.sh --only A1
+      - name: Unit tests
+        working-directory: adapters-agpl
+        run: uv sync --locked && uv run pytest -q
+      - name: Validation must stay within tolerance
+        working-directory: adapters-agpl
+        run: |
+          uv run python -m grahrekha_adapters_agpl.validate_astro | tee report.md
+          ! grep -q "| NO |" <(grep -v "true node" report.md)
+
   typescript:
     name: TypeScript packages
     runs-on: ubuntu-latest
