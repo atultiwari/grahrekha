@@ -15,6 +15,21 @@ def test_auto_prefers_v1_when_its_weights_are_installed(tmp_path: Path) -> None:
     assert resolve_segmenter("auto", tmp_path) == "v1"
 
 
+def test_auto_prefers_the_newest_installed_model(tmp_path: Path) -> None:
+    _install(tmp_path, "v1")
+    _install(tmp_path, "v2")
+    assert resolve_segmenter("auto", tmp_path) == "v2"
+
+
+def test_every_model_version_is_stamped_on_features() -> None:
+    from grahrekha_engine.palm.pipeline import pipeline_ids
+
+    assert pipeline_ids("v2")["segmenter"] == "grahrekha-lines-v2"
+    assert pipeline_ids("v2")["fate"] == "grahrekha-lines-v2"
+    assert pipeline_ids("v1")["segmenter"] == "grahrekha-lines-v1"
+    assert pipeline_ids("v0")["fate"] == "classical-f1"
+
+
 def test_auto_falls_back_to_v0_without_v1_weights(tmp_path: Path) -> None:
     assert resolve_segmenter("auto", tmp_path) == "v0"
 

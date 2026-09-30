@@ -20,9 +20,9 @@ class Settings(BaseSettings):
     shared_secret: str
     # Downloaded model weights (scripts/fetch-data.sh --only M1,M2).
     models_dir: Path = Path(__file__).resolve().parents[2] / "models" / "weights"
-    # Line segmenter: v0 (borrowed, prototype), v1 (our own, Phase 2; better on every
-    # accuracy measure, docs/eval/lines-v1.md) or auto (v1 when installed, else v0).
-    segmenter: Literal["auto", "v0", "v1"] = "auto"
+    # Line segmenter: v0 (borrowed, prototype), v1/v2 (our own; docs/eval/lines-v1.md,
+    # lines-v2.md) or auto (the newest of ours that is installed, else v0).
+    segmenter: Literal["auto", "v0", "v1", "v2"] = "auto"
     # Interpretation rule base (repository rules/, CC BY 4.0). In containers, mount it
     # and set ENGINE_RULES_DIR (docker-compose.yml does).
     rules_dir: Path = Field(default_factory=lambda: _repo_rules_dir())

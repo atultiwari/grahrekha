@@ -135,7 +135,7 @@ def evaluate(data: Path, segmenter: str) -> Evaluation:  # pragma: no cover - da
 def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser()
     parser.add_argument("data", type=Path)
-    parser.add_argument("--segmenter", choices=["v0", "v1"], default="v1")
+    parser.add_argument("--segmenter", choices=["v0", "v1", "v2"], default="v1")
     args = parser.parse_args()
     header = ["Line", "Palms with line", "Missed", "False alarms", "Recall", "Precision"]
     print(f"Segmenter: {args.segmenter}")

@@ -1,7 +1,8 @@
 """Per-line evaluation on canonical-frame samples with human line identities.
 
 Usage (from ml/):
-  uv run python -m grahrekha_ml.eval_canonical ../data --model <model.onnx> [--split eval_phone]
+  uv run python -m grahrekha_ml.eval_canonical ../data --model <model.onnx> \
+      [--dataset lines_v2 --split eval_phone | --dataset lines_v1 --split eval]
 
 Scores the raw model output (probability > 0.5 per line) against labels built by
 build_roboflow_dataset.py. Predictions on IGNORE pixels (minor creases) are not counted.
@@ -64,9 +65,10 @@ def main() -> None:  # pragma: no cover
     parser = argparse.ArgumentParser()
     parser.add_argument("data", type=Path)
     parser.add_argument("--model", type=Path, required=True)
+    parser.add_argument("--dataset", default="lines_v2", help="folder under data/processed")
     parser.add_argument("--split", default="eval_phone")
     args = parser.parse_args()
-    root = args.data / "processed/lines_v2" / args.split
+    root = args.data / "processed" / args.dataset / args.split
     header = ["Line", "Palms with line", "Missed", "False alarms", "Recall", "Precision"]
     print(f"Model: {args.model}\nSplit: {root}")
     print("| " + " | ".join(header) + " |")

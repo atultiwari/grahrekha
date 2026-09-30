@@ -140,7 +140,7 @@ def main() -> None:  # pragma: no cover - needs datasets and models
     parser = argparse.ArgumentParser()
     parser.add_argument("data", type=Path)
     parser.add_argument("--out", type=Path)
-    parser.add_argument("--segmenter", choices=["v0", "v1"], default="v0")
+    parser.add_argument("--segmenter", choices=["v0", "v1", "v2"], default="v0")
     args = parser.parse_args()
     text = report(evaluate(args.data, args.segmenter))
     print(text)

@@ -32,20 +32,28 @@ HAND_MODEL = Path("M1-mediapipe/hand_landmarker.task")
 LINE_MODELS = {
     "v0": Path("M2-palm-line-reader/student_fp16.onnx"),
     "v1": Path("M9-grahrekha-lines-v1/model.onnx"),
+    "v2": Path("M9-grahrekha-lines-v2/model.onnx"),
 }
-Segmenter = Literal["v0", "v1"]
-SegmenterChoice = Literal["auto", "v0", "v1"]
+Segmenter = Literal["v0", "v1", "v2"]
+SegmenterChoice = Literal["auto", "v0", "v1", "v2"]
+# Our own canonical-frame models, newest first (same architecture, different training).
+CANONICAL_MODELS: tuple[Segmenter, ...] = ("v2", "v1")
 
 
 def resolve_segmenter(choice: SegmenterChoice, models_dir: Path) -> Segmenter:
-    """ "auto" uses our v1 when its weights are installed, else v0.
+    """ "auto" uses the newest of our own models that is installed, else v0.
 
-    v1 weights are trained locally (ml/) and not distributed, so CI and fresh checkouts
+    Our weights are trained locally (ml/) and not distributed, so CI and fresh checkouts
     fall back to v0. An explicit choice is kept so a missing model fails loudly.
     """
     if choice != "auto":
         return choice
-    return "v1" if (models_dir / LINE_MODELS["v1"]).exists() else "v0"
+    installed = [m for m in CANONICAL_MODELS if (models_dir / LINE_MODELS[m]).exists()]
+    return installed[0] if installed else "v0"
+
+
+def _model_id(segmenter: Segmenter) -> str:
+    return v0.MODEL_ID if segmenter == "v0" else f"grahrekha-lines-{segmenter}"
 
 
 def pipeline_ids(segmenter: Segmenter) -> dict[str, str]:
@@ -54,9 +62,9 @@ def pipeline_ids(segmenter: Segmenter) -> dict[str, str]:
         "engine": __version__,
         "gate": "g1",
         "rectify": "affine-t1",
-        "segmenter": v0.MODEL_ID if segmenter == "v0" else v1.MODEL_ID,
+        "segmenter": _model_id(segmenter),
         # v0 has no fate class, so it relies on the classical detector.
-        "fate": "classical-f1" if segmenter == "v0" else v1.MODEL_ID,
+        "fate": "classical-f1" if segmenter == "v0" else _model_id(segmenter),
     }
 
 
@@ -110,7 +118,9 @@ class PalmAnalyzer:
             v0.PalmLineReaderV0(models_dir / LINE_MODELS["v0"]) if segmenter == "v0" else None
         )
         self._v1 = (
-            v1.CanonicalLineSegmenter(models_dir / LINE_MODELS["v1"]) if segmenter == "v1" else None
+            v1.CanonicalLineSegmenter(models_dir / LINE_MODELS[segmenter])
+            if segmenter in CANONICAL_MODELS
+            else None
         )
         self._lock = threading.Lock()
 

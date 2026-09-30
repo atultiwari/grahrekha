@@ -38,9 +38,10 @@
     Cheiro distinguishes the centre and the outer edge of the Mount of Jupiter; we
     cannot yet, so this uses the more moderate "centre" reading.
   validity_blocker: >-
-    Valid only with the v1 segmenter: heart end-zone agrees with the human-drawn line in
-    88% of palms with v1 (81/92, above the 85% bar) but 72% with v0 (66/92). Check
-    features.pipeline.segmenter before showing; see docs/eval/lines-v1.md.
+    Valid only with our own segmenters: heart end-zone agrees with the human-drawn line in
+    92% of palms with v2 (85/92) and 88% with v1 (81/92), above the 85% bar, but 72% with
+    v0 (66/92). Check features.pipeline.segmenter before showing; see
+    docs/eval/lines-v2.md.
   review: {status: extracted}
 
 - id: palm.heart.rises_on_saturn
@@ -69,9 +70,10 @@
     Cheiro's wording is harsh ("rather selfish"); the statement keeps his meaning but
     not his judgemental tone.
   validity_blocker: >-
-    Valid only with the v1 segmenter: heart end-zone agrees with the human-drawn line in
-    88% of palms with v1 (81/92, above the 85% bar) but 72% with v0 (66/92). Check
-    features.pipeline.segmenter before showing; see docs/eval/lines-v1.md.
+    Valid only with our own segmenters: heart end-zone agrees with the human-drawn line in
+    92% of palms with v2 (85/92) and 88% with v1 (81/92), above the 85% bar, but 72% with
+    v0 (66/92). Check features.pipeline.segmenter before showing; see
+    docs/eval/lines-v2.md.
   review: {status: extracted}
 
 - id: palm.heart.short
@@ -149,7 +151,8 @@
       "The Heart Line rising from between the first and second fingers, gives a calmer
       but a very deep nature in all matters of the affections"
   validity_blocker: >-
-    Valid only with the v1 segmenter: heart end-zone agrees with the human-drawn line in
-    88% of palms with v1 (81/92, above the 85% bar) but 72% with v0 (66/92). Check
-    features.pipeline.segmenter before showing; see docs/eval/lines-v1.md.
+    Valid only with our own segmenters: heart end-zone agrees with the human-drawn line in
+    92% of palms with v2 (85/92) and 88% with v1 (81/92), above the 85% bar, but 72% with
+    v0 (66/92). Check features.pipeline.segmenter before showing; see
+    docs/eval/lines-v2.md.
   review: {status: extracted}
